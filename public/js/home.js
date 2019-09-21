@@ -11,18 +11,12 @@ $(document).ready(() => {
       update(page_num);
     }
   });
-  $('#zip, #dist').on('change', () => {
+  $('#search').on('change', () => {
     update(page_num);
   });
-  const t = $('#zip');
-  t.val(localStorage.getItem('zipcode'));
-
-  if (t.val().length === 0) {
-    $('#default').remove();
-    $('#block').append('<div class="jumbotron" id="default"><div class="h2">Use the zipcode locator to find plants near you!</div></div>');
-  } else {
-    add(t.val(), 1);
-  }
+  const t = $('#search');
+  t.val(localStorage.getItem('search'));
+  add(t.val(), 1);
 });
 
 function add(zip, page) {
@@ -55,12 +49,12 @@ function add(zip, page) {
 
 function update(page) {
   $('#current_page').text(`Page ${page}`);
-  const zip = $('#zip');
+  const search = $('#search');
   $('#icon_1').attr('style', 'display:none');
   $('#icon_2').attr('style', '');
-  localStorage.setItem('zipcode', zip.val());
-  if (zip.val().length === 5) {
+  localStorage.setItem('search', search.val());
+  if (search.val().length > 2) {
     $('#block').empty();
-    add(zip.val(), page);
+    add(search.val(), page);
   }
 }

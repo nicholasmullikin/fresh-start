@@ -1,33 +1,19 @@
 extends layout
 
 block content
-    .row
+    .row.flexrow
         .col-sm-6
             h1 Fresh Start
-            p.lead 
+            p.lead A system that works for everyone
         .col-sm-3
         .col-sm-3
             .form-group
-                span Miles from zip
-                select.form-control(id = 'dist')
-                    option(value='5', selected = true) 5
-                    option(value='10', selected = true) 10
-                    option(value='15', selected = true) 15
-                    option(value='20', selected = true) 20
-                    option(value='25', selected = true) 25
-                    option(value='50000', selected = true) 50000
                 .input-group
-                    .input-group-addon
-                        span.glyphicon.glyphicon-map-marker(aria-hidden="true", id="icon_1", style="display:none")
-                        span.glyphicon.glyphicon-screenshot(aria-hidden="true", id="icon_2", style="")
-                    input.form-control(type='text', name= 'zip', id = 'zip', placeholder='Zipcode')
+                    input.form-control(type='text', name= 'search', id = 'search', placeholder='Search')
     hr
     .row(id = "block")
     .jumbotron(id="default")
-        .h2
-            | No one has posted any plants in your area!
-        p
-            | You can be the first one to post!
+        
     .row
         nav(aria-label='...')
             ul.pagination
