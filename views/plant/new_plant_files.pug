@@ -1,0 +1,20 @@
+extends ../layout
+
+block content
+  .page-header
+    h3 New Plant
+  form(enctype='multipart/form-data' method='post', id = "form")
+    input(type='hidden',id='_csrf', name='_csrf', value=_csrf)
+    .col-sm-3
+      label(for='fileToUpload') Select Files to Upload
+      br
+      input#filesToUpload(type='file' name='filesToUpload[]' multiple='multiple')
+      output#filesInfo
+    .col-sm-8
+      #userImages
+    .row.col-sm-offset-11(id = "image_buttons")
+      button.btn.btn-default(id="next", type="button") Next
+      button.btn.btn-default(id="back", type="button") Back
+      button.btn.btn-warning(id="skip", type="button") Skip
+    .col-sm-offset-11.row(id="submit_id")
+      button.btn.btn-info(id="submit", type="button" disabled) Submit

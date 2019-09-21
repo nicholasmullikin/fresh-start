@@ -1,0 +1,48 @@
+extends ../layout
+block content
+  h2
+    | Your Postings         
+  table.table.table-condensed
+    - if (array.length == 0){
+    | You have no postings
+    - } else {
+    thead
+      tr
+        th Pic
+        th Plant Name
+        th Plant Description
+        th Quantity
+        th Expires On
+        th
+        th
+    tbody
+        each val in array.length ? array : ['You haven\'t posted any plants!']
+          tr
+            td
+              - if(typeof val.pictures[0] !== "undefined"){
+              img.img(src=val.pictures[0], width='20px', height='20px', alt='Image not uploaded')
+              - }
+            td(id="name_"+val._id)= val.plantName
+            td= val.plantDescription
+            td= val.quantity
+            if(val.expireAt)
+              td= ((val.expireAt.getMonth() + 1) + "/" + val.expireAt.getDate() + "/" + val.expireAt.getFullYear() + " " + val.expireAt.getHours() + ":" + val.expireAt.getMinutes())
+            else
+              td
+            td
+              a.btn.btn-default(href='/plant/edit/' + val._id, role='button') View details »
+            td
+              button.btn.btn-warning(id=val._id, type='button', data-toggle='modal', data-target='#myModal')
+               | Remove
+    - }
+  #myModal.modal.fade(role='dialog')
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal') ×
+          h4.modal-title Removal Confirmation
+        .modal-body
+          p(id = "each_posting") 
+        .modal-footer
+          button.btn.btn-default(type='button', data-dismiss='modal') Nevermind
+          button.btn.btn-warning(id = 'del-btn') Delete it

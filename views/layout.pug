@@ -1,0 +1,53 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    //meta(http-equiv='Content-Security-Policy', content="default-src 'none';script-src 'self' https://nominatim.openstreetmap.org http://cdn.mxpnl.com http://api.mixpanel.com 'unsafe-eval' 'unsafe-inline';style-src 'self' 'unsafe-inline';img-src 'self' https://gravatar.com/ http://i.imgur.com data: blob:; font-src 'self';connect-src 'self' http://api.mixpanel.com;media-src 'self'")
+    //meta(http-equiv='Content-Security-Policy', content="default-src *")
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(name='theme-color' content='#4DA5F4')
+    meta(name='csrf-token', content=_csrf)
+    title #{title} - Plant Share
+    link(rel='shortcut icon', href='/favicon_fullsize.png')
+    link(rel='stylesheet', href='/css/main.css')
+    script(src='/js/lib/script.js')
+    script(src='/js/lib/jquery-3.1.1.min.js')
+    script(src='/js/lib/bootstrap.min.js')
+    if(title === "New Plant")
+      link(rel='stylesheet', href="https://unpkg.com/leaflet@1.3.3/dist/leaflet.css", integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==", crossorigin="anonymous")
+      script(src="https://unpkg.com/leaflet@1.3.3/dist/leaflet.js", integrity="sha512-tAGcCfR4Sc5ZP5ZoVz0quoZDYX5aCtEm/eu1KhSLj2c9eFrylXZknQYmxUssFaVJKvvc0dJQixhGjG2yXWiV9Q==", crossorigin="anonymous")
+      link(rel='stylesheet', href='/css/leaflet-geosearch.css')
+      script(src='https://unpkg.com/leaflet-geosearch@2.5.1/dist/bundle.min.js', crossorigin="anonymous")
+      script(src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js', crossorigin="anonymous")
+      link(href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css', rel='stylesheet', crossorigin="anonymous")
+      link(href='https://cdn.jsdelivr.net/npm/select2@4.0.3/dist/css/select2.min.css', rel='stylesheet', crossorigin="anonymous")
+      script(src='https://cdn.jsdelivr.net/npm/select2@4.0.3/dist/js/select2.min.js', crossorigin="anonymous")
+      link(href='https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.min.css', rel='stylesheet', crossorigin="anonymous")
+      script(src='/js/sr.js')
+    if(name === "plant_info")
+      link(rel='stylesheet', href="https://unpkg.com/leaflet@1.3.3/dist/leaflet.css", integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==", crossorigin="anonymous")
+      script(src="https://unpkg.com/leaflet@1.3.3/dist/leaflet.js", integrity="sha512-tAGcCfR4Sc5ZP5ZoVz0quoZDYX5aCtEm/eu1KhSLj2c9eFrylXZknQYmxUssFaVJKvvc0dJQixhGjG2yXWiV9Q==", crossorigin="anonymous")
+      link(rel='stylesheet', href='/css/leaflet-geosearch.css')
+      script(src='https://unpkg.com/leaflet-geosearch@2.5.1/dist/bundle.min.js', crossorigin="anonymous")
+      script(src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js', crossorigin="anonymous")
+      link(href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css', rel='stylesheet', crossorigin="anonymous")
+      script(src='https://www.google.com/recaptcha/api.js' async='' defer='')
+    if(title === "New Post - Image Upload")
+      link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.4.1/cropper.min.css" integrity="sha256-tr0KcGZK5YWOZpf8vWCwSKnBJukT0Le+Jg61JkiowL0=" crossorigin="anonymous")
+      script(src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.4.1/cropper.min.js" integrity="sha256-PxuqAappUuldt8Ar+Uie5GDNcN+GVUcM1Lkkvusn02E=" crossorigin="anonymous")
+    body
+    include partials/header
+
+    .container
+      include partials/flash
+      block content
+
+    include partials/footer
+
+
+    if (title === "Home")
+        script(src='/js/home.js')
+    else
+        script(src='/js/main.js')
+

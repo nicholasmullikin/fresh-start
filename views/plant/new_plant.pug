@@ -1,0 +1,88 @@
+extends ../layout
+
+block content
+  .page-header
+    h3 New Plant
+  form.form-horizontal(role='form', method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group
+      label.col-sm-3.control-label(for="plantName") Plant Name
+      .col-sm-7
+        input.form-control(type='text', name='plantName', id='plantName', placeholder='Plant Name', autofocus, required)
+      .col-sm-2
+        button.btn.btn-default(type='button', id = 'more_options')
+          | More Details
+    .form-group(style="display:none;",class='more larger')
+      .col-sm-1
+      label.col-sm-3.control-label(for="plantTaxa") Plant Taxa
+      .col-sm-6
+        div(id = "plantTaxaID")
+          select.js-data-example-ajax(type='text', name='plantTaxa', id = "plantTaxa", placeholder='(e.g. Aloe barbadensis)', style="width: 100%;", multiple="multiple", autofocus)
+    .form-group(style="display:none;", class='more')
+      .col-sm-1
+      label.col-sm-3.control-label(for="plantZone") Plant Zone
+      .col-sm-6
+        input.form-control(type='text', name='plantZone', id='plantZone', placeholder='(e.g. 1a or 11b)', autofocus)
+    .form-group(style="display:none;", class='more')
+      .col-sm-1
+      label.col-sm-3.control-label(for="plantType") Plant Type
+      .col-sm-6
+        input.form-control(type='text', name='plantType', id='plantType', placeholder='(annual, perennial)', autofocus)
+    .form-group
+      label.col-sm-3.control-label(for='plantDescription') Plant Description
+      .col-sm-7
+        textarea.form-control(rows='3', name='plantDescription', id='plantDescription', placeholder='Describe your plant', autofocus, required)
+    .form-group
+      label.col-sm-3.control-label(for='quantity') Quantity
+      .col-sm-7
+        input.form-control(type='number', name='quantity', id='quantity', placeholder='How many', min=1 ,autofocus, required)
+    .form-group
+      label.col-sm-3.control-label() Location
+      .col-sm-7
+        .input-group
+          input.form-control(type='text', name='zipcode', id='zipcode', placeholder='E.g. 12345', min=1, autofocus, required)
+          span(class="input-group-btn" )
+            button.btn.btn-default(type= "button" id = "search")
+              span(class = "glyphicon glyphicon-search")
+            button.btn.btn-default(type= "button" id = "display_map")
+              span(class = "glyphicon glyphicon-globe")
+          input(type='hidden', name= 'lat', id = 'lat')
+          input(type='hidden', name= 'lng', id = 'lng')
+    .form-group(id = "location_map" style = "")
+      if(results !== null)
+        #location(location=results.ll)
+      .col-sm-1
+      .col-sm-11
+        #mapid(style = "height: 400px" )
+    .form-group
+      label.col-sm-3.control-label() Choose a method of contact
+      .col-sm-6
+        label.radio.col-sm-3
+          input(type='radio', id = 'email_radio', name='contact', value='Email', data-toggle='radio', required)
+          span Email
+        label.radio.col-sm-3
+          input(type='radio', id = 'phone_radio', name='contact', value='Phone', data-toggle='radio', required)
+          span Phone
+        label.radio.col-sm-3
+          input(type='radio', id = 'both_radio', name='contact', value='Both', data-toggle='radio', required)
+          span Both
+    .form-group(style = "display:none;", id = "op1")
+      label.col-sm-3.control-label(for='email') Email
+      .col-sm-7
+        input.form-control(type='text', name='email', id='email', placeholder='',  autofocus)
+    .form-group(style = "display:none;", id = "op2")
+      label.col-sm-3.control-label(for='phone_number') Phone
+      .col-sm-7
+        input.form-control(type='text', name='phone_number', id='phone_number', placeholder='',  autofocus)
+    .form-group
+      label.col-sm-3.control-label() Price
+      .col-sm-7
+        select(type='text', style="width: 100%;", multiple="multiple", id="price-selector")
+        input(type='hidden', name='price', id = "price_field", value="")
+    .form-group
+      .col-sm-offset-3.col-sm-3
+        button.btn.btn-primary(type='submit')
+          | Next
+      .col-sm-offset-3.col-sm-3
+        button.btn.btn-warning(type='button', id="clear")
+          | Clear

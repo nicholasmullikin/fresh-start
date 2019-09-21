@@ -1,0 +1,45 @@
+extends ../layout
+
+block content
+    #myModal.modal.fade(role='dialog')
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type='button', data-dismiss='modal') ×
+                    h4.modal-title Removal Confirmation
+                .modal-body
+                    p Are you sure you want to delete your posting
+                .modal-footer
+                    button.btn.btn-default(type='button', data-dismiss='modal') Nevermind
+                    button.btn.btn-warning(id = 'del-btn') Delete it
+    .page-header
+        h3 Edit Plant Images
+    .row
+    form.form-horizontal(id='img-upload',role='form', enctype='multipart/form-data', method='POST')
+        input(type='hidden', name='_csrf', value=_csrf)
+        input(type='hidden', name= 'files_deleted', id = 'files_deleted', value="")
+        .col-sm-offset-3.form-group(id = 'img-group')
+            if(typeof array !== "undefined")
+                if(typeof array.pictures !== "undefined")
+                    - for(var i = 0; i < array.pictures.length; i++){
+                    if(typeof array.pictures[i] !== "undefined")
+                    .col-sm-offset-1.col-sm-4
+                        .panel.panel-primary
+                            .panel-body
+                                img(id = "img-" + i, src=array.pictures[i])
+                                button.btn.btn-info(id = i, class= 'del-img', type='button', style="margin-left:70px;")
+                                    | Remove Image
+                    - }
+        .form-group(id = 'new_img')
+            label.col-sm-3.control-label(for='image') New Images
+            .col-sm-7(id = "image")
+                input(type='file', name='gallery' id='last-upload')
+                button.btn.btn-default(id="add-img", type="button") Upload More
+        .form-group
+            .col-sm-7
+                button.btn.btn-primary(type='submit')
+                    | Submit
+            .col-sm-offset-1
+                button.btn.btn-warning(type='button', data-toggle='modal', data-target='#myModal')
+                    | Delete Posting
+

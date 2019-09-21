@@ -1,0 +1,129 @@
+extends ../layout
+
+block content
+  #myModal.modal.fade(role='dialog')
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal') ×
+          h4.modal-title Removal Confirmation
+        .modal-body
+          p Are you sure you want to delete your posting
+        .modal-footer
+          button.btn.btn-default(type='button', data-dismiss='modal') Nevermind
+          button.btn.btn-warning(id = 'del-btn') Delete it
+  .page-header
+    h3 Edit Plant Posting
+  .col-lg-12
+    input.form-control(id = "plant_id")
+    button.btn.btn-default(type= "button" id = "search")
+      span(class = "glyphicon glyphicon-search")
+  form.form-horizontal(id='img-upload',role='form', method='POST')
+    input(type='hidden', name='_csrf', value=_csrf, id='_csrf')
+    .form-group
+      label.col-sm-3.control-label(for='plantName') Plant Name
+      .col-sm-7
+        input.form-control(type='text', name='plantName', id='plantName', placeholder='Plant Name', autofocus, required)
+    .form-group
+      label.col-sm-3.control-label(for='plantName') Plant Taxa
+      .col-sm-7
+        input.form-control(type='text', name='plantTaxa', id='plantTaxa', placeholder='Plant Taxa', autofocus)
+    .form-group
+      label.col-sm-3.control-label(for='plantName') Plant Zone
+      .col-sm-7
+        input.form-control(type='text', name='plantZone', id='plantZone', placeholder='Plant Zone', autofocus)
+    .form-group
+      label.col-sm-3.control-label(for='plantDescription') Plant Description
+      .col-sm-7
+        input.form-control(type='text', name='plantDescription', id='plantDescription', placeholder='Describe your plant', autofocus)
+    .form-group
+      label.col-sm-3.control-label(for='quantity') Quantity
+      .col-sm-7
+        input.form-control(type='number', name='quantity', id='quantity', placeholder='How many', min=1 ,autofocus)
+    .form-group( id = "op1")
+      label.col-sm-3.control-label(for='email') Email
+      .col-sm-7
+        input.form-control(type='text', name='email', id='email', placeholder='',  autofocus)
+    .form-group( id = "op2")
+      label.col-sm-3.control-label(for='phone_number') Phone
+      .col-sm-7
+        input.form-control(type='text', name='phone_number', id='phone_number', placeholder='',  autofocus)
+    .form-group
+      label.col-sm-3.control-label(for='zipcode') Location
+      .col-sm-7
+        input.form-control(type='text', name='zipcode', id='zipcode', placeholder='E.g. 12345', min=1, autofocus)
+        input.form-control(type='text', name= 'lat', id = 'lat')
+        input.form-control(type='text', name= 'lng', id = 'lng')
+    .form-group
+      label.col-sm-3.control-label(for='zipcode') Pictures
+      .col-sm-7
+        input.form-control(type='text', name='pictures', id='pictures', placeholder='E.g. 12345', min=1, autofocus)
+    .form-group
+      .col-sm-offset-3.col-sm-7
+        button.btn.btn-primary(type='submit', id = "submit")
+          | Submit
+      .col-sm-offset-3
+        button.btn.btn-warning(type='button', data-toggle='modal', data-target='#myModal')
+          | Delete Posting
+  script.
+      $("#search").click(function () {
+          $.ajaxSetup({
+              beforeSend: function (xhr) {
+                  xhr.setRequestHeader('Csrf-Token', $("#_csrf").val());
+              }
+          });
+          $.ajax({
+              type: "POST",
+              headers: {
+                  'X-CSRF-Token': $("#_csrf").val()
+              },
+              dataType: 'json',
+              data: JSON.stringify({id: $("#plant_id").val()}),
+              url: window.location.pathname + "/data",
+              contentType: "application/json",
+              success: function (response) {
+                  console.log(response);
+                  if (typeof response !== 'undefined' && response.length !== 0 && response.msg !== "Not a valid plant id") {
+                      response.email = response.contact_info.email;
+                      response.phone_number = response.contact_info.phone_number;
+                      response.lat = response.location.coordinates[1];
+                      response.lng = response.location.coordinates[0];
+                      response.pictures = JSON.stringify(response.pictures);
+                      for (key of Object.keys(response)) {
+                          //if (response[key].hasChildNodes()) {
+                          if (response[key] !== "undefined")
+                              $("#" + key).val(response[key]);
+                          //}
+                      }
+                  }
+              }
+          });
+      });
+      $("#submit").click(function (event) {
+          event.preventDefault();
+          $.ajax({
+              type: "POST",
+              headers: {
+                  'X-CSRF-Token': $("#_csrf").val()
+              },
+              dataType: 'json',
+              data: JSON.stringify({
+                  admin: true,
+                  plantName: $("#plantName").val(),
+                  plantDescription: $("#plantDescription").val(),
+                  quantity: $("#quantity").val(),
+                  plantTaxa: $("#plantTaxa").val(),
+                  plantZone: $("#plantZone").val(),
+                  email: $("#email").val(),
+                  lat: $("#lat").val(),
+                  lng: $("#lng").val(),
+                  pictures: $("#pictures").val()
+              }),
+              url: window.location.origin + "/plant/edit/" + $("#plant_id").val(),
+              contentType: "application/json",
+              success: function (response) {
+                  console.log(response);
+              }
+          });
+      });
+

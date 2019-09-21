@@ -1,0 +1,86 @@
+extends ../layout
+
+block content
+  #myModal.modal.fade(role='dialog')
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal') ×
+          h4.modal-title Removal Confirmation
+        .modal-body
+          p Are you sure you want to delete your posting
+        .modal-footer
+          button.btn.btn-default(type='button', data-dismiss='modal') Nevermind
+          button.btn.btn-warning(id = 'del-btn') Delete it
+  .page-header
+    h3 Edit Plant Posting
+  form.form-horizontal(id='img-upload',role='form', method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group
+      label.col-sm-3.control-label(for='plantName') Plant Name
+      .col-sm-7
+        input.form-control(type='text', name='plantName', id='plantName', placeholder='Plant Name', autofocus, required, value = array.plantName)
+    .form-group
+      label.col-sm-3.control-label(for='plantTaxa') Plant Taxa
+      .col-sm-7
+        if(array.plantTaxa && array.plantTaxa !== 'undefined')
+          input.form-control(type='text', name='plantTaxa', id='plantTaxa', placeholder='Plant Taxa', autofocus, value = array.plantTaxa)
+        else
+          input.form-control(type='text', name='plantTaxa', id='plantTaxa', placeholder='Plant Taxa', autofocus)
+    .form-group
+      label.col-sm-3.control-label(for='plantType') Plant Type
+      .col-sm-7
+        if(array.plantTaxa && array.plantTaxa !== 'undefined')
+          input.form-control(type='text', name='plantType', id='plantType', placeholder='Plant Type', autofocus, value = array.plantType)
+        else
+          input.form-control(type='text', name='plantType', id='plantType', placeholder='Plant Type', autofocus)
+    .form-group
+      label.col-sm-3.control-label(for='plantZone') Plant Zone
+      .col-sm-7
+        if(array.plantZone && array.plantZone !== 'undefined')
+          input.form-control(type='text', name='plantZone', id='plantZone', placeholder='Plant Zone', autofocus, value = array.plantZone)
+        else
+          input.form-control(type='text', name='plantZone', id='plantZone', placeholder='Plant Zone', autofocus)
+    .form-group
+      label.col-sm-3.control-label(for='plantDescription') Plant Description
+      .col-sm-7
+        input.form-control(type='text', name='plantDescription', id='plantDescription', placeholder='Describe your plant', autofocus, required, value = array.plantDescription)
+    .form-group
+      label.col-sm-3.control-label(for='quantity') Quantity
+      .col-sm-7
+        input.form-control(type='number', name='quantity', id='quantity', placeholder='How many', min=1 ,autofocus, required, value = array.quantity)
+    .form-group( id = "op1")
+      label.col-sm-3.control-label(for='email') Email
+      .col-sm-7
+        if(array.contact_info.email && array.contact_info.email !== 'undefined')
+          input.form-control(type='text', name='email', id='email', placeholder='',  autofocus, value = array.contact_info.email)
+        else
+          input.form-control(type='text', name='email', id='email', placeholder='',  autofocus)
+    .form-group( id = "op2")
+      label.col-sm-3.control-label(for='phone_number') Phone
+      .col-sm-7
+        if(array.contact_info.phone_number && array.contact_info.phone_number !== 'undefined')
+          input.form-control(type='text', name='phone_number', id='phone_number', placeholder='',  autofocus, value = array.contact_info.phone_number)
+        else
+          input.form-control(type='text', name='phone_number', id='phone_number', placeholder='',  autofocus)
+    .form-group
+      label.col-sm-3.control-label(for='zipcode') Location
+      .col-sm-7
+        input.form-control(type='text', name='zipcode', id='zipcode', placeholder='E.g. 12345', min=1, autofocus, value = array.zipcode)
+        input(type='text', name= 'lat', id = 'lat', style="display:none;" value = array.location.coordinates[0])
+        input(type='text', name= 'lng', id = 'lng', style="display:none;" value = array.location.coordinates[1])
+    .form-group
+      label.col-sm-3.control-label(for='price') Price
+      .col-sm-7
+        if(array.price && array.price !== 'undefined')
+          input.form-control(type='text', name='price', id='price', placeholder='',  autofocus, value = array.price)
+        else
+          input.form-control(type='text', name='price', id='price', placeholder='',  autofocus)
+    .form-group
+      .col-sm-offset-3.col-sm-7
+        button.btn.btn-primary(type='submit') 
+          | Submit
+      .col-sm-offset-3
+        button.btn.btn-warning(type='button', data-toggle='modal', data-target='#myModal')
+          | Delete Posting
+
