@@ -92,6 +92,17 @@ textarea {
   padding-bottom: 13.5px;
 }
 
+.flexrow{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.flexrow > [class*='col-'] {
+  display: flex;
+  flex-direction: column;
+  justify-content: center
+}
+
 canvas, img {
   max-width: 100%;
 }
