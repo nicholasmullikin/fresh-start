@@ -4,11 +4,13 @@ const multer = require('multer');
 const Jimp = require('jimp');
 
 const quantity = 20;
-const plantSchema = new mongoose.Schema({
-  plantName: String,
-  plantID: {type: String, unique: true},
-  plantDescription: String,
-  quantity: Number,
+const loanSchema = new mongoose.Schema({
+  loanTitle: String,
+  loanID: {type: String, unique: true},
+  loanDescription: String,
+  amountWanted: Number,
+  amountLoaned: Number,
+  dueDate: Date,
   location: {
     type: {type: String, default: 'Point', enum: ['Point']},
     coordinates: [Number],
@@ -20,25 +22,29 @@ const plantSchema = new mongoose.Schema({
     email: String,
     phone_number: String,
   },
-  plantTaxa: String,
-  plantZone: String,
-  price: String,
-  plantType: String,
-  createdAt: {type: Date, expires: 7 * 24 * 3600, default: Date.now},
+
+
+  createdAt: {type: Date, expires: 365 * 24 * 3600, default: Date.now},
 
 }, {timestamps: true});
 
-plantSchema.index({location: '2dsphere'});
+//loanSchema.index({location: '2dsphere'});
 // plantSchema.index({"expireAt": 1}, {expireAfterSeconds: 1});
 
 /**
  * Get all plant info
  */
 
-plantSchema.statics.getAll = function(callback) {
+loanSchema.statics.getAll = function(callback) {
   return this.find(callback);
 };
-plantSchema.statics.getPlantsInLocation = function(lat, lon, dist, page, callback) {
+
+loanSchema.statics.getLoans = function(callback) {
+  return this.find({}, callback);
+};
+
+/*
+loanSchema.statics.getPlantsInLocation = function(lat, lon, dist, page, callback) {
   return this.find(
       {
         location: {
@@ -57,8 +63,9 @@ plantSchema.statics.getPlantsInLocation = function(lat, lon, dist, page, callbac
       callback
   );
 };
+*/
 
-
+/*
 function uploadFile(readStream, name) {
   const {Storage} = require('@google-cloud/storage');
   // Creates a client
@@ -149,8 +156,8 @@ plantSchema.statics.plantUpload = multer(
       name: 'gallery',
       maxCount: 8,
     }]);
+*/
+loanSchema.statics.isObjectId = (n) => mongoose.Types.ObjectId.isValid(n);
 
-plantSchema.statics.isObjectId = (n) => mongoose.Types.ObjectId.isValid(n);
-
-const Plant = mongoose.model('Plant', plantSchema);
-module.exports = Plant;
+const Loan = mongoose.model('Loan', loanSchema);
+module.exports = Loan;

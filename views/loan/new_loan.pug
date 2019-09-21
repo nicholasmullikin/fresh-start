@@ -1,0 +1,54 @@
+extends ../layout
+
+block content
+  .page-header
+    h3 New Loan
+  form.form-horizontal(role='form', method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group
+      label.col-sm-3.control-label(for="loanName") Loan Name
+      .col-sm-7
+        input.form-control(type='text', name='loanName', id='loanName', placeholder='Loan Name', autofocus, required)
+    .form-group
+      label.col-sm-3.control-label(for='loanDescription') Loan Description
+      .col-sm-7
+        textarea.form-control(rows='3', name='loanDescription', id='loanDescription', placeholder='Describe your loan', autofocus, required)
+    .form-group
+      label.col-sm-3.control-label(for='amount') Amount Requested
+      .col-sm-7
+        input.form-control(type='number', name='amount', id='amount', placeholder='Amount in USD', min=1 ,autofocus, required)
+    .form-group
+      label.col-sm-3.control-label(for='name') Full Name
+      .col-sm-7
+        input.form-control(type='text', name='name', id='name', autofocus, required)
+    .form-group
+      label.col-sm-3.control-label(for='dueDate') Due Date
+      .col-sm-7
+        input.form-control(type='date', name='dueDate', id='dueDate', autofocus, required)
+    .form-group
+      label.col-sm-3.control-label() Choose a method of contact
+      .col-sm-6
+        label.radio.col-sm-3
+          input(type='radio', id = 'email_radio', name='contact', value='Email', data-toggle='radio', required)
+          span Email
+        label.radio.col-sm-3
+          input(type='radio', id = 'phone_radio', name='contact', value='Phone', data-toggle='radio', required)
+          span Phone
+        label.radio.col-sm-3
+          input(type='radio', id = 'both_radio', name='contact', value='Both', data-toggle='radio', required)
+          span Both
+    .form-group(style = "display:none;", id = "op1")
+      label.col-sm-3.control-label(for='email') Email
+      .col-sm-7
+        input.form-control(type='text', name='email', id='email', placeholder='',  autofocus)
+    .form-group(style = "display:none;", id = "op2")
+      label.col-sm-3.control-label(for='phone_number') Phone
+      .col-sm-7
+        input.form-control(type='text', name='phone_number', id='phone_number', placeholder='',  autofocus)
+    .form-group
+      .col-sm-offset-3.col-sm-3
+        button.btn.btn-primary(type='submit')
+          | Next
+      .col-sm-offset-3.col-sm-3
+        button.btn.btn-warning(type='button', id="clear")
+          | Clear

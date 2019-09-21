@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const {check, validationResult} = require('express-validator/check');
 const xssFilters = require('xss-filters');
 const sgMail = require('@sendgrid/mail');
-const Plant = require('../models/Plant');
+const Plant = require('../models/Loan');
 const User = require('../models/User');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);

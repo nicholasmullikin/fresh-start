@@ -27,6 +27,15 @@ const userSchema = new mongoose.Schema({
   profile: {
     location: String,
   },
+  creditScore: Number,
+  paypalId: String,
+  loaner: Boolean,
+
+
+
+
+
+
 }, {timestamps: true});
 
 /**

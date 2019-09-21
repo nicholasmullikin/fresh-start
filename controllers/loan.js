@@ -7,79 +7,76 @@ const xssFilters = require('xss-filters');
 const https = require('https');
 const uuidv1 = require('uuid/v1');
 const User = require('../models/User');
-const Plant = require('../models/Plant');
+const Loan = require('../models/Loan');
 /**
- * GET /plant/view/:id
- * Show the info of a plant.
+ * GET /loan/view/:id
+ * Show the info of a loan.
  */
-exports.plantInfo = (req, res) => {
-  if (!Plant.isObjectId(req.params.id)) {
+exports.loanInfo = (req, res) => {
+  if (!Loan.isObjectId(req.params.id)) {
     req.flash('errors', {
-      msg: 'Not a valid plant id',
+      msg: 'Not a valid load id',
     });
     return res.redirect('back');
   }
-  Plant.findOne({
+  Loan.findOne({
     _id: mongoose.Types.ObjectId(req.params.id),
-  }, (err, plant) => {
+  }, (err, loan) => {
     if (err) return res.redirect('/');
-    if (plant === null || plant.plantName === null) {
+    if (loan === null || loan.loanName === null) {
       res.redirect('/');
     }
-    return res.render('plant/plant_info', {
-      title: plant.plantName,
-      name: 'plant_info',
-      array: plant,
+    return res.render('loan/loan_info', {
+      title: loan.loanName,
+      name: 'loan_info',
+      array: loan,
     });
   });
 };
 
 
 /**
- * GET /plant/new/
- * New Plant Page
+ * GET /loan/new/
+ * New Loan Page
  */
-exports.newPlant = (req, res) => {
+exports.newLoan = (req, res) => {
   if (!req.user) {
     req.flash('errors', {
       msg: 'You must be logged in to create a posting',
     });
-    req.session.returnTo = '/plant/new/';
+    req.session.returnTo = '/loan/new/';
     return res.redirect('/login');
   }
   const geo = geoip.lookup(getIP(req));
   // console.log(req.user);
-  return res.render('plant/new_plant', {
-    title: 'New Plant',
+  return res.render('loan/new_loan', {
+    title: 'New Loan',
     results: geo,
   });
 };
 
 /**
- * POST /plant/new/
- * Page one of making a new plant
+ * POST /loan/new/
+ * Page one of making a new loan
  */
-exports.checkPostPlant = [
-  check('lat', 'Lat - Map error').isFloat({min: -90.0, max: 90.0}),
-  check('lng', 'Long - Map error').isFloat({min: -180.0, max: 180.0}),
-  check('plantName', 'Name must be between 3 and 100 characters').isLength({min: 4, max: 100}),
-  check('plantTaxa', 'Taxa must be less than 100 characters').isLength({max: 100}),
-  check('plantZone', 'Zone is invalid').isLength({max: 100}),
-  check('plantDescription', 'Plant Description must be at least 4 characters long').isLength({min: 4}),
-  check('quantity', 'Number is invalid').isInt({min: 1, max: 999}),
-  check('price', 'Price must be less than 100 characters').isLength({max: 100}),
-  check('plantType', 'Plant type must be less than 100 characters').isLength({max: 100}),
-  oneOf([
-    check('email', 'Email is invalid').isEmail(),
-    check('phone_number', 'Phone number is invalid').isMobilePhone('any'),
-  ]),
+exports.checkPostLoan = [
+  check('loanName', 'Name must be between 3 and 100 characters').isLength({min: 4, max: 100}),
+  check('loanDescription', 'Loan Description must be at least 4 characters long').isLength({min: 4}),
+  check('amount', 'Load amount is invalid, we don\'t support tranactions above $5000').isInt({min: 1, max: 5000}),
+  check('name', 'Name must be between 3 and 100 characters').isLength({min: 4, max: 100}),
+  check('dueDate', 'Date bad').isISO8601(),
+  check('loanType', 'Loan type must be less than 100 characters').isLength({max: 100}),
+  // oneOf([
+  //   check('email', 'Email is invalid').isEmail(),
+  //   check('phone_number', 'Phone number is invalid').isMobilePhone('any'),
+  // ]),
 ];
-exports.postPlant = (req, res) => {
+exports.postLoan = (req, res) => {
   if (!req.user) {
     req.flash('errors', {
       msg: 'You must be logged in to create a posting',
     });
-    req.session.returnTo = '/plant/new/';
+    req.session.returnTo = '/loan/new/';
     return res.redirect('/login');
   }
   const errors = validationResult(req).mapped();
@@ -100,49 +97,41 @@ exports.postPlant = (req, res) => {
           req.flash('errors', {
             msg: 'Please wait another ' + Math.round((60000 - difference )/ 1000) + ' seconds'
           });
-          res.redirect('/plant');
+          res.redirect('/loan');
         } */
     if (true) {
       temp_date = new Date();
       // console.log(temp_date);
       temp_date.setDate(temp_date.getDate() + 7);
       // console.log(temp_date);
-      req.body.plantName = xssFilters.inHTMLData(req.body.plantName);
-      req.body.plantDescription = xssFilters.inHTMLData(req.body.plantDescription);
-      req.body.quantity = xssFilters.inHTMLData(req.body.quantity);
-      req.body.lat = xssFilters.inHTMLData(req.body.lat);
-      req.body.lng = xssFilters.inHTMLData(req.body.lng);
-      req.body.plantTaxa = xssFilters.inHTMLData(req.body.plantTaxa);
-      req.body.plantZone = xssFilters.inHTMLData(req.body.plantZone);
+      req.body.loanName = xssFilters.inHTMLData(req.body.loanName);
+      req.body.loanDescription = xssFilters.inHTMLData(req.body.loanDescription);
+      req.body.amount = xssFilters.inHTMLData(req.body.amount);
+      req.body.name = xssFilters.inHTMLData(req.body.name);
+      req.body.dueDate = xssFilters.inHTMLData(req.body.dueDate);
       req.body.email = xssFilters.inHTMLData(req.body.email);
       req.body.phone_number = xssFilters.inHTMLData(req.body.phone_number);
-      req.body.price = xssFilters.inHTMLData(req.body.price);
-      req.body.plantType = xssFilters.inHTMLData(req.body.plantType);
-      const plant = new Plant({
-        plantName: req.body.plantName,
-        plantDescription: req.body.plantDescription,
-        quantity: req.body.quantity,
-        location: {type: 'Point', coordinates: [req.body.lat, req.body.lng]},
-        plantID: uuidv1(),
+      const loan = new Loan({
+        loanTitle: req.body.loanName,
+        loanID: uuidv1(),
+        loanDescription: req.body.loanDescription,
+        amountWanted: req.body.amount,
+        amountLoaned: 0,
+        dueDate: req.body.dueDate,
         user: req.user._id,
-        plantTaxa: req.body.plantTaxa,
-        plantZone: req.body.plantZone,
-        contact_info:
-                    {
-                      email: req.body.email,
-                      phone_number: req.body.phone_number,
-                    },
-        price: req.body.price,
-        plantType: req.body.plantType,
-        expireAt: temp_date,
-      });
+        pictures: [],
+        contact_info: {
+          email: req.body.email,
+          phone_number: req.body.phone_number,
+        }
+        });
 
-      plant.save((err, plant) => {
+      loan.save((err, loan) => {
         if (err) {
           req.flash('errors', err);
           return res.redirect('back');
         }
-        return res.redirect(`/plant/upload/${plant._id}`);
+        return res.redirect(`/loan/upload/${loan._id}`);
       });
     }
   }, (err) => {
@@ -152,48 +141,48 @@ exports.postPlant = (req, res) => {
 
 
 /**
- * GET /plant/upload/:id
- * Page 2 of plant form (upload page)
+ * GET /loan/upload/:id
+ * Page 2 of loan form (upload page)
  */
-exports.newPlantImages = (req, res) => {
+exports.newLoanImages = (req, res) => {
   if (!req.user) {
     req.flash('errors', {
       msg: 'You must be logged in to create a posting',
     });
-    req.session.returnTo = '/plant';
+    req.session.returnTo = '/loan';
     return res.redirect('/login');
   }
-  Plant.findOne({
+  Loan.findOne({
     _id: mongoose.Types.ObjectId(req.params.id),
-  }, (err, plant) => {
+  }, (err, loan) => {
     if (err) {
       return handleError(err);
     }
-    if (plant === null) {
+    if (loan === null) {
       return res.redirect('/');
     }
-    if (plant.user.toString() !== req.user._id.toString()) {
+    if (loan.user.toString() !== req.user._id.toString()) {
       req.flash('errors', {
         msg: 'You are not the owner!',
       });
       return res.redirect('/');
     }
-    return res.render('plant/new_plant_files', {
+    return res.render('loan/new_loan_files', {
       title: 'New Post - Image Upload',
-      name: 'new_plant',
+      name: 'new_loan',
     });
   });
 };
 
 /**
- * POST /plant/upload/:id
- * Page 2 of plant form (upload page)
+ * POST /loan/upload/:id
+ * Page 2 of loan form (upload page)
  */
-exports.postNewPlantImages = (req, res) => {
-  if (!Plant.isObjectId(req.params.id)) {
+exports.postNewLoanImages = (req, res) => {
+  if (!Loan.isObjectId(req.params.id)) {
     // console.log("jo")
     req.flash('errors', {
-      msg: 'Not a valid plant id',
+      msg: 'Not a valid loan id',
     });
     return res.redirect('back');
   }
@@ -201,7 +190,7 @@ exports.postNewPlantImages = (req, res) => {
     req.flash('errors', {
       msg: 'You must be logged in to create a posting',
     });
-    req.session.returnTo = '/plant';
+    req.session.returnTo = '/loan';
     return res.redirect('/login');
   }
   User.findById(req.user.id, (err, user) => {
@@ -220,10 +209,10 @@ exports.postNewPlantImages = (req, res) => {
           req.flash('errors', {
             msg: 'Please wait another ' + Math.round((60000 - difference )/ 1000) + ' seconds'
           });
-          return res.redirect('/plant');
+          return res.redirect('/loan');
         } */
     if (true) {
-      Plant.plantUpload(req, res, (err) => {
+      Loan.loanUpload(req, res, (err) => {
         if (err) {
           console.log(err);
           req.flash('errors', {
@@ -237,7 +226,7 @@ exports.postNewPlantImages = (req, res) => {
             console.log(error);
           }
         });
-        const new_plant = {pictures: []};
+        const new_loan = {pictures: []};
         let total_size = 0;
         if (req.files.gallery) {
           for (let i = 0; i < req.files.gallery.length; i++) {
@@ -247,7 +236,7 @@ exports.postNewPlantImages = (req, res) => {
                 msg: 'Image is too big! (10 MB max)',
               });
               delete req.files.gallery[i].buffer;
-              return res.redirect(`/plant/upload/${req.params.id}`);
+              return res.redirect(`/loan/upload/${req.params.id}`);
             }
             const filetypes = /(jpg|jpeg|png|gif|tif)/;
             const infoFile = fileType(req.files.gallery[i].buffer);
@@ -256,7 +245,7 @@ exports.postNewPlantImages = (req, res) => {
                 msg: 'Only images are allowed (e.g. jpg jpeg png gif tif)',
               });
               delete req.files.gallery[i].buffer;
-              return res.redirect(`/plant/upload/${req.params.id}`);
+              return res.redirect(`/loan/upload/${req.params.id}`);
             }
             const mimetype = filetypes.test(infoFile.mime);
             const extname = filetypes.test(infoFile.ext);
@@ -265,19 +254,19 @@ exports.postNewPlantImages = (req, res) => {
                 msg: 'Only images are allowed (e.g. jpg jpeg png gif tif)',
               });
               delete req.files.gallery[i].buffer;
-              return res.redirect(`/plant/upload/${req.params.id}`);
+              return res.redirect(`/loan/upload/${req.params.id}`);
             }
 
             const current_date = Date.now().toString();
-            // req.files.gallery[i].path = path.join(__dirname, '/../uploads/plantImages', req.user._id.toString() + '-' + current_date + '.' + ext);
+            // req.files.gallery[i].path = path.join(__dirname, '/../uploads/loanImages', req.user._id.toString() + '-' + current_date + '.' + ext);
             const name = `${req.user._id.toString()}-${current_date}.` + 'png';
-            const urlBegin = 'https://storage.googleapis.com/plant-app-e8af8.appspot.com/';
-            Plant.on('error', (err) => {
+            const urlBegin = 'https://storage.googleapis.com/loan-app-e8af8.appspot.com/';
+            Loan.on('error', (err) => {
               console.log(err);
             });
-            Plant.saveImage(req.files.gallery[i].buffer, name);
-            // console.log(new_plant.pictures);
-            new_plant.pictures.push(urlBegin + name);
+            Loan.saveImage(req.files.gallery[i].buffer, name);
+            // console.log(new_loan.pictures);
+            new_loan.pictures.push(urlBegin + name);
             delete req.files.gallery[i].buffer;
             if (i + 1 === req.files.gallery.length) {
               const date = new Date();
@@ -291,12 +280,12 @@ exports.postNewPlantImages = (req, res) => {
                 }
               });
 
-              Plant.findByIdAndUpdate(req.params.id, new_plant, (err) => {
-                // console.log("plant");
+              Loan.findByIdAndUpdate(req.params.id, new_loan, (err) => {
+                // console.log("loan");
                 if (err) {
                   console.log(err);
                   req.flash('errors', {msg: err});
-                  return res.redirect(`/plant/upload/${req.params.id}`);
+                  return res.redirect(`/loan/upload/${req.params.id}`);
                 }
                 return res.redirect('/');
               });
@@ -310,64 +299,64 @@ exports.postNewPlantImages = (req, res) => {
 
 
 /**
- * GET /plant/edit/:id
- * Edit Plant page
+ * GET /loan/edit/:id
+ * Edit Loan page
  */
-exports.editPlant = (req, res) => {
-  if (!Plant.isObjectId(req.params.id)) {
+exports.editLoan = (req, res) => {
+  if (!Loan.isObjectId(req.params.id)) {
     // console.log("jo")
     req.flash('errors', {
-      msg: 'Not a valid plant id',
+      msg: 'Not a valid loan id',
     });
     return res.redirect('back');
   }
-  Plant.findOne({
+  Loan.findOne({
     _id: mongoose.Types.ObjectId(req.params.id),
-  }, (err, plant) => {
+  }, (err, loan) => {
     if (err) {
       return handleError(err);
     }
-    if (plant === null) {
+    if (loan === null) {
       return res.redirect('/');
     }
-    if (plant.user.toString() !== req.user._id.toString() && !req.user.admin) {
+    if (loan.user.toString() !== req.user._id.toString() && !req.user.admin) {
       req.flash('errors', {
         msg: 'You are not the owner!',
       });
       return res.redirect('/');
     }
-    return res.render('plant/edit_plant', {
+    return res.render('loan/edit_loan', {
       title: 'Edit Posting',
-      array: plant,
+      array: loan,
     });
   });
 };
 
 /**
- * POST /plant/edit/:id
+ * POST /loan/edit/:id
  * Change a posting
  */
-exports.checkPostPlantEdit = [
+exports.checkPostLoanEdit = [
   check('lat', 'Map error').isFloat({min: -90.0, max: 90.0}),
   check('lng', 'Map error').isFloat({min: -180.0, max: 180.0}),
-  check('plantName', 'Name must be between 3 and 100 characters').isLength({min: 4, max: 100}),
-  check('plantTaxa', 'Taxa must be less than 100 characters').isLength({max: 100}),
+  check('loanName', 'Name must be between 3 and 100 characters').isLength({min: 4, max: 100}),
+  check('loanTaxa', 'Taxa must be less than 100 characters').isLength({max: 100}),
   check('price', 'Price must be less than 100 characters').isLength({max: 100}),
-  check('plantZone', 'Zone is invalid').isLength({max: 4}),
-  check('plantDescription', 'Plant Description must be at least 4 characters long').isLength({min: 4}),
+  check('loanZone', 'Zone is invalid').isLength({max: 4}),
+  check('loanDescription', 'Loan Description must be at least 4 characters long').isLength({min: 4}),
   check('quantity', 'Number is invalid').isInt({min: 1, max: 999}),
-  check('plantType', 'Plant type must be less than 100 characters').isLength({max: 100}),
+  check('loanType', 'Loan type must be less than 100 characters').isLength({max: 100}),
   oneOf([
     check('email', 'Email is invalid').isEmail(),
     check('phone_number', 'Phone number is invalid').isMobilePhone('any'),
   ]),
 ];
-exports.postPlantEdit = (req, res) => {
+exports.postLoanEdit = (req, res) => {
   if (!req.user) {
     req.flash('errors', {
       msg: 'You must be logged in to edit a posting',
     });
-    req.session.returnTo = '/plant';
+    req.session.returnTo = '/loan';
     return res.redirect('/login');
   }
 
@@ -387,7 +376,7 @@ exports.postPlantEdit = (req, res) => {
     //     req.flash('errors', {
     //         msg: 'You are not the owner!'
     //     });
-    //     req.session.returnTo = '/plant';
+    //     req.session.returnTo = '/loan';
     //     return res.redirect('/login');
     // }
     /* let date = new Date();
@@ -396,10 +385,10 @@ exports.postPlantEdit = (req, res) => {
           req.flash('errors', {
             msg: 'Please wait another ' + Math.round((60000 - difference )/ 1000) + ' seconds'
           });
-           return res.redirect('/plant');
+           return res.redirect('/loan');
         } */
 
-    Plant.findById(req.params.id, (err, response) => {
+    Loan.findById(req.params.id, (err, response) => {
       if (err) {
         console.log(err);
         // TODO add redirect
@@ -410,19 +399,19 @@ exports.postPlantEdit = (req, res) => {
         });
         return res.redirect('/');
       }
-      req.body.plantName = xssFilters.inHTMLData(req.body.plantName);
-      req.body.plantDescription = xssFilters.inHTMLData(req.body.plantDescription);
+      req.body.loanName = xssFilters.inHTMLData(req.body.loanName);
+      req.body.loanDescription = xssFilters.inHTMLData(req.body.loanDescription);
       req.body.quantity = xssFilters.inHTMLData(req.body.quantity);
       req.body.lat = xssFilters.inHTMLData(req.body.lat);
       req.body.lng = xssFilters.inHTMLData(req.body.lng);
-      req.body.plantTaxa = xssFilters.inHTMLData(req.body.plantTaxa);
-      req.body.plantZone = xssFilters.inHTMLData(req.body.plantZone);
+      req.body.loanTaxa = xssFilters.inHTMLData(req.body.loanTaxa);
+      req.body.loanZone = xssFilters.inHTMLData(req.body.loanZone);
       req.body.email = xssFilters.inHTMLData(req.body.email);
       req.body.phone_number = xssFilters.inHTMLData(req.body.phone_number);
       req.body.price = xssFilters.inHTMLData(req.body.price);
-      const new_plant = {
-        plantName: req.body.plantName || response.plantName,
-        plantDescription: req.body.plantDescription || response.plantDescription,
+      const new_loan = {
+        loanName: req.body.loanName || response.loanName,
+        loanDescription: req.body.loanDescription || response.loanDescription,
         quantity: req.body.quantity || response.quantity,
         location:
                     {
@@ -433,75 +422,75 @@ exports.postPlantEdit = (req, res) => {
                               req.body.lng || response.location.coordinates[1],
                             ],
                     },
-        plantTaxa: req.body.plantTaxa || response.plantTaxa,
-        plantZone: req.body.plantZone || response.plantZone,
+        loanTaxa: req.body.loanTaxa || response.loanTaxa,
+        loanZone: req.body.loanZone || response.loanZone,
         price: req.body.price || response.price,
         contact_info:
                     {
                       email: req.body.email || response.contact_info.email,
                       phone_number: req.body.phone_number || response.contact_info.phone_number,
                     },
-        plantType: req.body.plantType || response.plantType,
+        loanType: req.body.loanType || response.loanType,
 
       };
       if (req.user.admin && req.body.admin) {
-        new_plant.pictures = JSON.parse(req.body.pictures);
+        new_loan.pictures = JSON.parse(req.body.pictures);
       }
-      Plant.findByIdAndUpdate(response._id, new_plant, (err) => {
+      Loan.findByIdAndUpdate(response._id, new_loan, (err) => {
         if (err) {
           console.log(err);
           req.flash('errors', {msg: 'Update failed'});
           return res.redirect('back');
         }
 
-        return res.redirect(`/plant/editUpload/${req.params.id}`);
+        return res.redirect(`/loan/editUpload/${req.params.id}`);
       });
     });
   });
 };
 
 /**
- * GET /plant/editUpload/:id
- * Edit Plant page - images
+ * GET /loan/editUpload/:id
+ * Edit Loan page - images
  */
-exports.editPlantImages = (req, res) => {
-  if (!Plant.isObjectId(req.params.id)) {
+exports.editLoanImages = (req, res) => {
+  if (!Loan.isObjectId(req.params.id)) {
     // console.log("jo");
     req.flash('errors', {
-      msg: 'Not a valid plant id',
+      msg: 'Not a valid loan id',
     });
     return res.redirect('back');
   }
-  Plant.findOne({
+  Loan.findOne({
     _id: mongoose.Types.ObjectId(req.params.id),
-  }, (err, plant) => {
+  }, (err, loan) => {
     if (err) {
       return handleError(err);
     }
-    if (plant === null) {
+    if (loan === null) {
       return res.redirect('/');
     }
-    if (plant.user.toString() !== req.user._id.toString() && !req.user.admin) {
+    if (loan.user.toString() !== req.user._id.toString() && !req.user.admin) {
       req.flash('errors', {
         msg: 'You are not the owner!',
       });
       return res.redirect('/');
     }
-    return res.render('plant/edit_plant_files', {
+    return res.render('loan/edit_loan_files', {
       title: 'Edit Posting',
-      array: plant,
+      array: loan,
     });
   });
 };
 
 /**
- * POST /plant/editUpload/:id
+ * POST /loan/editUpload/:id
  * Change a posting - images
  */
-exports.postPlantEditImages = (req, res) => {
-  if (!Plant.isObjectId(req.params.id)) {
+exports.postLoanEditImages = (req, res) => {
+  if (!Loan.isObjectId(req.params.id)) {
     req.flash('errors', {
-      msg: 'Not a valid plant id',
+      msg: 'Not a valid loan id',
     });
     return res.redirect('back');
   }
@@ -510,7 +499,7 @@ exports.postPlantEditImages = (req, res) => {
     req.flash('errors', {
       msg: 'You must be logged in to edit a posting',
     });
-    req.session.returnTo = '/plant';
+    req.session.returnTo = '/loan';
     return res.redirect('/login');
   }
 
@@ -530,7 +519,7 @@ exports.postPlantEditImages = (req, res) => {
       req.flash('errors', {
         msg: 'You are not the owner!',
       });
-      req.session.returnTo = '/plant';
+      req.session.returnTo = '/loan';
       return res.redirect('/login');
     }
     /* let date = new Date();
@@ -539,18 +528,18 @@ exports.postPlantEditImages = (req, res) => {
           req.flash('errors', {
             msg: 'Please wait another ' + Math.round((60000 - difference )/ 1000) + ' seconds'
           });
-           return res.redirect('/plant');
+           return res.redirect('/loan');
         } */
 
-    Plant.findById(req.params.id, (err, response) => {
+    Loan.findById(req.params.id, (err, response) => {
       if (err) {
         console.log(err);
         req.flash('errors', {
-          msg: 'Error finding plant',
+          msg: 'Error finding loan',
         });
         return res.redirect('back');
       }
-      Plant.plantUpload(req, res, (err) => {
+      Loan.loanUpload(req, res, (err) => {
         if (err) {
           console.log(err);
         }
@@ -563,7 +552,7 @@ exports.postPlantEditImages = (req, res) => {
             return res.redirect('back');
           }
         });
-        const new_plant = {pictures: []};
+        const new_loan = {pictures: []};
         const final_images = response.pictures;
         // console.log(final_images);
         let t = req.body.files_deleted;
@@ -571,14 +560,14 @@ exports.postPlantEditImages = (req, res) => {
           t = JSON.parse(t);
           // console.log(t[0]);
           for (let c = 0; c < t.length; c++) {
-            Plant.deleteImage(t[c]);
+            Loan.deleteImage(t[c]);
             final_images.splice(final_images.indexOf(t[c]), 1);
           }
         }
-        new_plant.pictures = final_images;
+        new_loan.pictures = final_images;
 
         // console.log(final_images);
-        // console.log(new_plant);
+        // console.log(new_loan);
 
         if (req.files.gallery) {
           let total_size = 0;
@@ -590,7 +579,7 @@ exports.postPlantEditImages = (req, res) => {
                 msg: 'Image is too big! (10 MB max)',
               });
               delete req.files.gallery[i].buffer;
-              return res.redirect('/plant');
+              return res.redirect('/loan');
             }
             const filetypes = /(jpg|jpeg|png|gif|tif)/;
             const infoFile = fileType(req.files.gallery[i].buffer);
@@ -599,7 +588,7 @@ exports.postPlantEditImages = (req, res) => {
                 msg: 'Only images are allowed (e.g. jpg jpeg png gif tif)',
               });
               delete req.files.gallery[i].buffer;
-              return res.redirect('/plant');
+              return res.redirect('/loan');
             }
             const mimetype = filetypes.test(infoFile.mime);
             const extname = filetypes.test(infoFile.ext);
@@ -608,20 +597,20 @@ exports.postPlantEditImages = (req, res) => {
                 msg: 'Only images are allowed (e.g. jpg jpeg png gif tif)',
               });
               delete req.files.gallery[i].buffer;
-              return res.redirect('/plant');
+              return res.redirect('/loan');
             }
 
-            Plant.on('error', (err) => {
+            Loan.on('error', (err) => {
               console.log(err);
             });
             const current_date = Date.now().toString();
             const name = `${req.user._id.toString()}-${current_date}.` + 'png';
-            const urlBegin = 'https://storage.googleapis.com/plant-app-e8af8.appspot.com/';
-            Plant.saveImage(req.files.gallery[i].buffer, name);
+            const urlBegin = 'https://storage.googleapis.com/loan-app-e8af8.appspot.com/';
+            Loan.saveImage(req.files.gallery[i].buffer, name);
             delete req.files.gallery[i].buffer;
             final_images.push(urlBegin + name);
             if (i + 1 === imgAmount) {
-              new_plant.pictures = final_images;
+              new_loan.pictures = final_images;
               const date = new Date();
               user.uploads.push({
                 time: date,
@@ -632,7 +621,7 @@ exports.postPlantEditImages = (req, res) => {
                   console.log(err);
                 }
               });
-              Plant.findByIdAndUpdate(response._id, new_plant, (err) => {
+              Loan.findByIdAndUpdate(response._id, new_loan, (err) => {
                 if (err) {
                   console.log(err);
                   req.flash('errors', {msg: err});
@@ -643,7 +632,7 @@ exports.postPlantEditImages = (req, res) => {
             }
           }
         } else {
-          Plant.findByIdAndUpdate(response._id, new_plant, (err) => {
+          Loan.findByIdAndUpdate(response._id, new_loan, (err) => {
             if (err) {
               console.log(err);
               req.flash('errors', {msg: err});
@@ -661,10 +650,10 @@ exports.postPlantEditImages = (req, res) => {
 
 
 /**
- * GET /plant/postings
+ * GET /loan/postings
  * Show all posting by a user
  */
-exports.plantListings = (req, res) => {
+exports.loanListings = (req, res) => {
   if (!req.user) {
     req.flash('errors', {
       msg: 'You must be logged in to view your postings',
@@ -672,35 +661,35 @@ exports.plantListings = (req, res) => {
     req.session.returnTo = '/postings';
     return res.redirect('/login');
   }
-  Plant.find({
+  Loan.find({
     user: req.user._id,
-  }, (err, plants) => res.render('plant/postings', {
+  }, (err, loans) => res.render('loan/postings', {
     title: 'Your Postings',
-    array: plants,
+    array: loans,
   }));
 };
 
 /**
- * DELETE /plant/edit/:id
+ * DELETE /loan/edit/:id
  * Remove a posting
  */
-exports.deletePlant = (req, res) => {
-  Plant.findOne({_id: mongoose.Types.ObjectId(req.params.id)}, (err, plant) => {
+exports.deleteLoan = (req, res) => {
+  Loan.findOne({_id: mongoose.Types.ObjectId(req.params.id)}, (err, loan) => {
     if (err) return handleError(err);
 
-    User.findById(mongoose.mongo.ObjectId(plant.user), (err, user) => {
+    User.findById(mongoose.mongo.ObjectId(loan.user), (err, user) => {
       if (err) {
         console.log(err);
         return res.sendStatus(402);
       }
       if (user) {
-        if (plant === null) {
+        if (loan === null) {
           res.redirect('/');
         }
-        for (let i = 0; i < plant.pictures.length; i++) {
-          Plant.deleteImage(plant.pictures[i]);
+        for (let i = 0; i < loan.pictures.length; i++) {
+          Loan.deleteImage(loan.pictures[i]);
         }
-        Plant.findByIdAndRemove(mongoose.mongo.ObjectId(req.params.id), (err) => {
+        Loan.findByIdAndRemove(mongoose.mongo.ObjectId(req.params.id), (err) => {
           console.log(err);
         });
       }
@@ -710,13 +699,13 @@ exports.deletePlant = (req, res) => {
 };
 
 /**
- * POST /plant/view/:id
- * Get contact info for a plant
+ * POST /loan/view/:id
+ * Get contact info for a loan
  */
 exports.getContactInformation = (req, res) => { // TODO: add captcha here
-  if (!Plant.isObjectId(req.body.plant_id)) {
+  if (!Loan.isObjectId(req.body.loan_id)) {
     req.flash('errors', {
-      msg: 'Not a valid plant id',
+      msg: 'Not a valid loan id',
     });
     return res.redirect('back');
   }
@@ -728,22 +717,22 @@ exports.getContactInformation = (req, res) => { // TODO: add captcha here
   }
   verifyRecaptcha(req.body['g-recaptcha-response'], (success) => {
     if (success) {
-      Plant.findById(req.params.id, (err, plant) => {
+      Loan.findById(req.params.id, (err, loan) => {
         if (err) {
           console.log(err);
           return res.sendStatus(402);
         }
-        User.findById(mongoose.mongo.ObjectId(plant.user), (err, user) => {
+        User.findById(mongoose.mongo.ObjectId(loan.user), (err, user) => {
           if (err) {
             console.log(err);
             return res.sendStatus(402);
           }
           if (user) {
-            return res.render('plant/plant_info', {
-              title: plant.plantName,
-              name: 'plant_info',
-              array: plant,
-              user_info: plant.contact_info,
+            return res.render('loan/loan_info', {
+              title: loan.loanName,
+              name: 'loan_info',
+              array: loan,
+              user_info: loan.contact_info,
             });
           }
         });
@@ -769,10 +758,10 @@ exports.adminPage = (req, res) => {
       // return res.sendStatus(402);
     }
     if (user.admin) {
-      return res.render('plant/admin', {
+      return res.render('loan/admin', {
         title: 'admin',
-        name: 'plant_info',
-        array: 'plant',
+        name: 'loan_info',
+        array: 'loan',
       });
     }
 
@@ -784,9 +773,9 @@ exports.adminPage = (req, res) => {
  * Admin Page for data
  */
 exports.adminPageData = (req, res) => {
-  if (!Plant.isObjectId(req.body.id)) {
+  if (!Loan.isObjectId(req.body.id)) {
     return res.send(JSON.stringify({
-      msg: 'Not a valid plant id',
+      msg: 'Not a valid loan id',
     }));
   }
 
@@ -796,17 +785,17 @@ exports.adminPageData = (req, res) => {
       // return res.sendStatus(402);
     }
     if (user.admin) {
-      if (!Plant.isObjectId(req.body.id)) {
+      if (!Loan.isObjectId(req.body.id)) {
         return res.send(JSON.stringify({
-          msg: 'Not a valid plant id',
+          msg: 'Not a valid loan id',
         }));
       }
-      Plant.findById(req.body.id, (err, plant) => {
+      Loan.findById(req.body.id, (err, loan) => {
         if (err) {
           console.log(err);
           return res.sendStatus(402);
         }
-        return res.send(JSON.stringify(plant));
+        return res.send(JSON.stringify(loan));
       });
     } else {
       return res.render('not_found');
@@ -840,9 +829,9 @@ function verifyRecaptcha(key, callback) {
 }
 
 
-function checkIfUserIsOwner(user, plantId) {
+function checkIfUserIsOwner(user, loanId) {
   for (let i = 0; i < user.uploads.length; i++) {
-    if (user.uploads[i] === plantId) {
+    if (user.uploads[i] === loanId) {
       return true;
     }
   }

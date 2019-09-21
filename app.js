@@ -34,7 +34,7 @@ const homeController = require('./controllers/home');
 const userController = require('./controllers/user');
 // const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
-const plantController = require('./controllers/plant');
+const loanController = require('./controllers/loan');
 
 /**
  * API keys and Passport configuration.
@@ -177,7 +177,7 @@ app.use(express.static(path.join(__dirname, 'public'), {maxAge: 31557600000}));
  * Primary app routes.
  */
 app.get('/', homeController.index);
-app.get('/api/plants', homeController.getPlantsInRange);
+app.get('/api/loan', homeController.getPlantsInRange);
 
 app.get('/login', userController.getLogin);
 app.post('/login', userController.checkPostLogin, userController.postLogin);
@@ -197,26 +197,26 @@ app.post('/account/delete', passportConfig.isAuthenticated, userController.postD
 app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userController.getOauthUnlink);
 
 
-app.get('/plant/new/', passportConfig.isAuthenticated, plantController.newPlant);
-app.post('/plant/new/', passportConfig.isAuthenticated, plantController.checkPostPlant, plantController.postPlant);
-app.get('/plant/upload/:id', passportConfig.isAuthenticated, plantController.newPlantImages);
-app.post('/plant/upload/:id', passportConfig.isAuthenticated, plantController.postNewPlantImages);
+app.get('/loan/new/', passportConfig.isAuthenticated, loanController.newLoan);
+app.post('/loan/new/', passportConfig.isAuthenticated, loanController.checkPostLoan, loanController.postLoan);
+app.get('/loan/upload/:id', passportConfig.isAuthenticated, loanController.newLoanImages);
+app.post('/loan/upload/:id', passportConfig.isAuthenticated, loanController.postNewLoanImages);
 
-app.get('/plant/view/:id', plantController.plantInfo);
-app.post('/plant/view/:id', passportConfig.isAuthenticated, plantController.getContactInformation);
+app.get('/loan/view/:id', loanController.loanInfo);
+app.post('/loan/view/:id', passportConfig.isAuthenticated, loanController.getContactInformation);
 
-app.get('/plant/postings', passportConfig.isAuthenticated, plantController.plantListings);
-app.get('/plant/edit/:id', passportConfig.isAuthenticated, plantController.editPlant);
-app.post('/plant/edit/:id', passportConfig.isAuthenticated, plantController.checkPostPlantEdit, plantController.postPlantEdit);
-app.get('/plant/editUpload/:id', passportConfig.isAuthenticated, plantController.editPlantImages);
+app.get('/loan/postings', passportConfig.isAuthenticated, loanController.loanListings);
+app.get('/loan/edit/:id', passportConfig.isAuthenticated, loanController.editLoan);
+app.post('/loan/edit/:id', passportConfig.isAuthenticated, loanController.checkPostLoanEdit, loanController.postLoanEdit);
+app.get('/loan/editUpload/:id', passportConfig.isAuthenticated, loanController.editLoanImages);
 
-app.get('/admin', passportConfig.isAuthenticated, plantController.adminPage);
-app.post('/admin/data', passportConfig.isAuthenticated, plantController.adminPageData);
+app.get('/admin', passportConfig.isAuthenticated, loanController.adminPage);
+app.post('/admin/data', passportConfig.isAuthenticated, loanController.adminPageData);
 
 
-app.post('/plant/editUpload/:id', passportConfig.isAuthenticated, plantController.postPlantEditImages);
+app.post('/loan/editUpload/:id', passportConfig.isAuthenticated, loanController.postLoanEditImages);
 
-app.delete('/plant/edit/:id', passportConfig.isAuthenticated, plantController.deletePlant);
+app.delete('/loan/edit/:id', passportConfig.isAuthenticated, loanController.deleteLoan);
 /**
  * API examples routes.
  */
