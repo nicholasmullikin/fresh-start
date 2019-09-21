@@ -91,211 +91,50 @@ exports.postLoan = (req, res) => {
       console.log(err);
     }
   }).then((user) => {
-    const date = new Date();
-    const difference = (date.getTime() - last_upload(user.uploads).getTime());
-    /* if (difference < 60000) {
-          req.flash('errors', {
-            msg: 'Please wait another ' + Math.round((60000 - difference )/ 1000) + ' seconds'
-          });
-          res.redirect('/loan');
-        } */
-    if (true) {
-      temp_date = new Date();
-      // console.log(temp_date);
-      temp_date.setDate(temp_date.getDate() + 7);
-      // console.log(temp_date);
-      req.body.loanName = xssFilters.inHTMLData(req.body.loanName);
-      req.body.loanDescription = xssFilters.inHTMLData(req.body.loanDescription);
-      req.body.amount = xssFilters.inHTMLData(req.body.amount);
-      req.body.name = xssFilters.inHTMLData(req.body.name);
-      req.body.dueDate = xssFilters.inHTMLData(req.body.dueDate);
-      req.body.email = xssFilters.inHTMLData(req.body.email);
-      req.body.phone_number = xssFilters.inHTMLData(req.body.phone_number);
-      const loan = new Loan({
-        loanTitle: req.body.loanName,
-        loanID: uuidv1(),
-        loanDescription: req.body.loanDescription,
-        amountWanted: req.body.amount,
-        amountLoaned: 0,
-        dueDate: req.body.dueDate,
-        user: req.user._id,
-        pictures: [],
-        contact_info: {
-          email: req.body.email,
-          phone_number: req.body.phone_number,
-        }
-        });
+    req.body.loanName = xssFilters.inHTMLData(req.body.loanName);
+    req.body.loanDescription = xssFilters.inHTMLData(req.body.loanDescription);
+    req.body.amount = xssFilters.inHTMLData(req.body.amount);
+    req.body.name = xssFilters.inHTMLData(req.body.name);
+    req.body.dueDate = xssFilters.inHTMLData(req.body.dueDate);
+    req.body.email = xssFilters.inHTMLData(req.body.email);
+    req.body.phone_number = xssFilters.inHTMLData(req.body.phone_number);
+    const loan = new Loan({
+      loanTitle: req.body.loanName,
+      loanDescription: req.body.loanDescription,
+      amountWanted: req.body.amount,
+      amountLoaned: 0,
+      creditScore: 0,
+      dueDate: req.body.dueDate,
+      user: req.user._id,
+      contact_info: {
+        email: req.body.email,
+        phone_number: req.body.phone_number,
+      }
+    });
 
-      loan.save((err, loan) => {
-        if (err) {
-          req.flash('errors', err);
-          return res.redirect('back');
-        }
-        return res.redirect(`/loan/upload/${loan._id}`);
+    loan.save((err, loan) => {
+      if (err) {
+        console.log(err);
+        req.flash('errors', err);
+        return res.redirect('back');
+      }
+      user.applications.push({
+        id: user._id
       });
-    }
+      user.save((err) => {
+        if (err) {
+          console.log(err);
+        }
+      });
+
+      return res.redirect(`/loan/view/${loan._id}`);
+    });
+
   }, (err) => {
     console.log(err);
   });
 };
 
-
-/**
- * GET /loan/upload/:id
- * Page 2 of loan form (upload page)
- */
-exports.newLoanImages = (req, res) => {
-  if (!req.user) {
-    req.flash('errors', {
-      msg: 'You must be logged in to create a posting',
-    });
-    req.session.returnTo = '/loan';
-    return res.redirect('/login');
-  }
-  Loan.findOne({
-    _id: mongoose.Types.ObjectId(req.params.id),
-  }, (err, loan) => {
-    if (err) {
-      return handleError(err);
-    }
-    if (loan === null) {
-      return res.redirect('/');
-    }
-    if (loan.user.toString() !== req.user._id.toString()) {
-      req.flash('errors', {
-        msg: 'You are not the owner!',
-      });
-      return res.redirect('/');
-    }
-    return res.render('loan/new_loan_files', {
-      title: 'New Post - Image Upload',
-      name: 'new_loan',
-    });
-  });
-};
-
-/**
- * POST /loan/upload/:id
- * Page 2 of loan form (upload page)
- */
-exports.postNewLoanImages = (req, res) => {
-  if (!Loan.isObjectId(req.params.id)) {
-    // console.log("jo")
-    req.flash('errors', {
-      msg: 'Not a valid loan id',
-    });
-    return res.redirect('back');
-  }
-  if (!req.user) {
-    req.flash('errors', {
-      msg: 'You must be logged in to create a posting',
-    });
-    req.session.returnTo = '/loan';
-    return res.redirect('/login');
-  }
-  User.findById(req.user.id, (err, user) => {
-    if (err) {
-      console.log(err);
-    }
-    const date = new Date();
-    if (!user) {
-      req.flash('errors', {
-        msg: 'User error',
-      });
-      return res.redirect('back');
-    }
-    const difference = (date.getTime() - last_upload(user.uploads).getTime());
-    /* if (difference < 60000) {
-          req.flash('errors', {
-            msg: 'Please wait another ' + Math.round((60000 - difference )/ 1000) + ' seconds'
-          });
-          return res.redirect('/loan');
-        } */
-    if (true) {
-      Loan.loanUpload(req, res, (err) => {
-        if (err) {
-          console.log(err);
-          req.flash('errors', {
-            msg: 'Upload error',
-          });
-          return res.redirect('back');
-        }
-
-        lusca.csrf()(req, res, (error) => {
-          if (error) {
-            console.log(error);
-          }
-        });
-        const new_loan = {pictures: []};
-        let total_size = 0;
-        if (req.files.gallery) {
-          for (let i = 0; i < req.files.gallery.length; i++) {
-            total_size += req.files.gallery[i].size;
-            if (req.files.gallery[i].size > 1024 * 1024 * 10) {
-              req.flash('errors', {
-                msg: 'Image is too big! (10 MB max)',
-              });
-              delete req.files.gallery[i].buffer;
-              return res.redirect(`/loan/upload/${req.params.id}`);
-            }
-            const filetypes = /(jpg|jpeg|png|gif|tif)/;
-            const infoFile = fileType(req.files.gallery[i].buffer);
-            if (infoFile === null) {
-              req.flash('errors', {
-                msg: 'Only images are allowed (e.g. jpg jpeg png gif tif)',
-              });
-              delete req.files.gallery[i].buffer;
-              return res.redirect(`/loan/upload/${req.params.id}`);
-            }
-            const mimetype = filetypes.test(infoFile.mime);
-            const extname = filetypes.test(infoFile.ext);
-            if (!mimetype || !extname) {
-              req.flash('errors', {
-                msg: 'Only images are allowed (e.g. jpg jpeg png gif tif)',
-              });
-              delete req.files.gallery[i].buffer;
-              return res.redirect(`/loan/upload/${req.params.id}`);
-            }
-
-            const current_date = Date.now().toString();
-            // req.files.gallery[i].path = path.join(__dirname, '/../uploads/loanImages', req.user._id.toString() + '-' + current_date + '.' + ext);
-            const name = `${req.user._id.toString()}-${current_date}.` + 'png';
-            const urlBegin = 'https://storage.googleapis.com/loan-app-e8af8.appspot.com/';
-            Loan.on('error', (err) => {
-              console.log(err);
-            });
-            Loan.saveImage(req.files.gallery[i].buffer, name);
-            // console.log(new_loan.pictures);
-            new_loan.pictures.push(urlBegin + name);
-            delete req.files.gallery[i].buffer;
-            if (i + 1 === req.files.gallery.length) {
-              const date = new Date();
-              user.uploads.push({
-                time: date,
-                size: total_size,
-              });
-              user.save((err) => {
-                if (err) {
-                  console.log(err);
-                }
-              });
-
-              Loan.findByIdAndUpdate(req.params.id, new_loan, (err) => {
-                // console.log("loan");
-                if (err) {
-                  console.log(err);
-                  req.flash('errors', {msg: err});
-                  return res.redirect(`/loan/upload/${req.params.id}`);
-                }
-                return res.redirect('/');
-              });
-            }
-          }
-        }
-      });
-    }
-  });
-};
 
 
 /**

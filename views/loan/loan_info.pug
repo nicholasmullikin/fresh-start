@@ -2,61 +2,31 @@ extends ../layout
 block content
   .container.center
     .page-header
-      h1= array.plantName
+      h1= array.loanTitle
     .row
-      .media
-        .media-left
-            if(typeof array.pictures !== "undefined")
-                if(typeof array.pictures[0] !== "undefined")
-                    img.img(src=array.pictures[0], style = "max-width:300px; max-height:300px;" alt='Image not uploaded')
         .media-body
           .panel.panel-primary
             .panel-heading
               h3.panel-title Description
             .panel-body
               ul.list-group
-                if(typeof array.plantDescription !== "undefined")
+                if(typeof array.loanDescription !== "undefined")
                   li.list-group-item
-                    =array.plantDescription
-                if(typeof array.quantity !== "undefined")
+                    =array.loanDescription
+                if(typeof array.amountWanted !== "undefined")
                   li.list-group-item
-                    ="Quantity: " + array.quantity
-                if(typeof array.plantTaxa !== "undefined" && array.plantTaxa !== "undefined")
+                    ="amountWanted: " + array.amountWanted
+                if(typeof array.amountLoaned !== "undefined")
                   li.list-group-item
-                    ="This plant's taxa is: " + array.plantTaxa
-                if(typeof array.plantType !== "undefined" && array.plantType !== "undefined")
-                  li.list-group-item
-                    ="This plant's type is: " + array.plantType
-                if(typeof array.plantZone !== "undefined" && array.plantZone !== "undefined")
-                  li.list-group-item
-                    ="This plant's zone is: " + array.plantZone
-                if(typeof array.price !== "undefined" && array.price !== "undefined")
-                  li.list-group-item
-                    ="Price: " + array.price
-    .row
-      if(typeof array.location !== "undefined")
-        if(typeof array.location.coordinates !== "undefined")
-          if(typeof array.location.coordinates[0] !== "undefined" && typeof array.location.coordinates[1] !== "undefined")
-            //h4= array.location.coordinates[0] + " " + array.location.coordinates[1]
-            input(type="hidden", value = array.location.coordinates[1], id='lat')
-            input(type="hidden", value = array.location.coordinates[0], id='lon')
-            #mapid(style = "height: 400px" )
-    .row
-      each val in (array.pictures.length - 1) ? array.pictures.slice(1, array.pictures.length) : ['None']
-        if(typeof val !== "undefined" && val !== "None")
-                .col-md-3
-                    .panel.panel-default
-                        .panel-body
-                            a(href=val)
-                                img.img(src=val, style = "max-width:200px; max-height:200px;", alt='Image not uploaded')
+                    ="amountLoaned: " + array.amountLoaned
     .row
       .contact-info(id = "info")
         if(typeof user_info === 'undefined' || user_info.length === 0)
           form(id="contact_form", action="?", method="POST")
             input(type='hidden', name='_csrf', value=_csrf)
             input(type='hidden', name='plant_id', value=array._id)
-            button.btn.btn-default(id = "reveal-info")
-              | Show Contact Infomation
+            button.btn.btn-default(id = "invest")
+              | Invest
             #recaptcha.g-recaptcha(data-sitekey="6LfpOm0UAAAAAL4_FVnJFI1mYP1W3Up01e4wD1K6" data-callback="onSubmit" data-size='invisible')
         else
           .panel.panel-info

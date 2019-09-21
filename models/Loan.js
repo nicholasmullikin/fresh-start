@@ -3,21 +3,16 @@ const mongoose = require('mongoose');
 const multer = require('multer');
 const Jimp = require('jimp');
 
-const quantity = 20;
+//const quantity = 20;
+
+var ObjectId = mongoose.Schema.Types.ObjectId;
 const loanSchema = new mongoose.Schema({
   loanTitle: String,
-  loanID: {type: String, unique: true},
   loanDescription: String,
   amountWanted: Number,
   amountLoaned: Number,
   dueDate: Date,
-  location: {
-    type: {type: String, default: 'Point', enum: ['Point']},
-    coordinates: [Number],
-    // index: '2dsphere',
-  },
-  user: String,
-  pictures: [],
+  user: ObjectId,
   contact_info: {
     email: String,
     phone_number: String,
@@ -42,7 +37,9 @@ loanSchema.statics.getAll = function(callback) {
 loanSchema.statics.getLoans = function(callback) {
   return this.find({}, callback);
 };
-
+loanSchema.statics.getLoansByBame = function(name, callback) {
+  return this.find({}, callback);
+};
 /*
 loanSchema.statics.getPlantsInLocation = function(lat, lon, dist, page, callback) {
   return this.find(

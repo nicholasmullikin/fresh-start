@@ -199,8 +199,8 @@ app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userControl
 
 app.get('/loan/new/', passportConfig.isAuthenticated, loanController.newLoan);
 app.post('/loan/new/', passportConfig.isAuthenticated, loanController.checkPostLoan, loanController.postLoan);
-app.get('/loan/upload/:id', passportConfig.isAuthenticated, loanController.newLoanImages);
-app.post('/loan/upload/:id', passportConfig.isAuthenticated, loanController.postNewLoanImages);
+//app.get('/loan/upload/:id', passportConfig.isAuthenticated, loanController.newLoanImages);
+//app.post('/loan/upload/:id', passportConfig.isAuthenticated, loanController.postNewLoanImages);
 
 app.get('/loan/view/:id', loanController.loanInfo);
 app.post('/loan/view/:id', passportConfig.isAuthenticated, loanController.getContactInformation);
