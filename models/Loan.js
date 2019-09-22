@@ -16,6 +16,7 @@ const loanSchema = new mongoose.Schema({
   waitingForFunding: Boolean,
   waitingForRepayment: Boolean,
   overdue: Boolean,
+  failed: Boolean,
   dueDate: Date,
   user: ObjectId,
   contact_info: {

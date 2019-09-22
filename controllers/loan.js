@@ -11,16 +11,11 @@ const Loan = require('../models/Loan');
 const Payment = require('../models/Payment');
 
 function getInterestRate(credit) {
-  var cred = credit;
-  if(cred > 100){
-    cred = 100;
-  }
-  else if(cred < 0){
-    cred = 0;
-  }
-  return (100 - credit) / 100.0;
+  return 0.1 + credit * -0.001;
 }
-
+function getMaxBorrow(credit) {
+  return 47 * Math.pow(Math.E, 0.0576 * credit);
+}
 /**
  * GET /loan/view/:id
  * Show the info of a loan.
@@ -63,9 +58,12 @@ exports.newLoan = (req, res) => {
   }
   const geo = geoip.lookup(getIP(req));
   // console.log(req.user);
-  return res.render('loan/new_loan', {
-    title: 'New Loan',
-    results: geo,
+  User.findById(req.user.id, (err, user) => {
+    return res.render('loan/new_loan', {
+      title: 'New Loan',
+      maxBorrow: getMaxBorrow(user.creditScore).toFixed(2),
+      interestRate: getInterestRate(user.creditScore).toFixed(4)
+    });
   });
 };
 
@@ -178,6 +176,7 @@ exports.postLoan = (req, res) => {
           waitingForFunding: 1,
           waitingForRepayment: 0,
           overdue: 0,
+          failed: 0
         });
 
         loan.save((err, loan) => {

@@ -117,7 +117,7 @@ exports.postSignup = (req, res, next) => {
     admin: false,
     applications: [],
     tokens: [],
-    creditScore: 0,
+    creditScore: 20,
     paypalId: null,
     loaner: loaner,
   });
