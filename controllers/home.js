@@ -9,6 +9,30 @@ exports.index = (req, res) => {
     title: 'Home',
   });
 };
+
+
+/**
+ * GET /info
+ * info page.
+ */
+exports.info = (req, res) => {
+  res.render('info', {
+    title: 'Home',
+  });
+};
+
+/**
+ * GET /credits
+ * info page.
+ */
+exports.credits = (req, res) => {
+  res.render('credits', {
+    title: 'credits',
+  });
+};
+
+
+
 /**
  * GET /api/plants
  * Plants that are in range
@@ -26,6 +50,9 @@ exports.getPlantsInRange = (req, res) => {
         results_to_send[i] = {
           loanTitle: result[i].loanTitle,
           loanDescription: result[i].loanDescription,
+          amountWanted: result[i].amountWanted,
+          amountLoaned: result[i].amountLoaned,
+          interestRate: result[i].interestRate,
           page: `/loan/view/${result[i]._id}`,
         };
       }

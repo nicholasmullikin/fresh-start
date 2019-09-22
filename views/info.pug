@@ -1,0 +1,37 @@
+extends layout
+
+block content
+
+  .page-header
+    - const pStyles = {"text-align": "center", "text-transform": "uppercase" };
+    h1(style=pStyles) Mission Statement
+
+    style.
+        p {
+            text-decoration: bold;
+        }
+    body
+
+        p(style=pStyles) We would like to give people a Fresh Start by:
+
+    .row.row2
+            .col-sm-4
+                img.image2(src = '/img/money image .svg' width = '65%')
+            .col-sm-4
+                img.image3(src = '/img/win-win.jpg')
+            .col-sm-4
+                img.image4(src = '/img/credit score image .png' width = '75%')
+
+    .row.row1
+        .col-sm-4
+            h3 Crowd-funded Micro-loaning
+            p Fresh Start is a crowd-funded micro-loan platform where investors can make a profit.
+            p We seek to create a network of financial security and opportunity for those left out.
+        .col-sm-4
+            h3 Low Interest Rates
+            p As we are creating loans from thousands of lender contributions, the risk across each investment is low.
+            p This allows for excellent interest rates for borrowers.
+        .col-sm-4
+            h3 Transparent Rating System
+            p Credit companies often make mistakes and can leave information out when calculating a credit score for you.
+            p At Fresh Start we seek to accurately capture your economic situation and make the entire process transparent.

@@ -3,7 +3,7 @@ block content
   h2
     | Your Postings
   table.table.table-condensed
-    - if (array.length == 0){
+    - if (array.length === 0){
     | You have no postings
     - } else {
     thead
@@ -12,24 +12,23 @@ block content
         th Loan Description
         th Amount Wanted
         th Amount Loaned
-        th
+        th Waiting For Funding
+        th Waiting For Repayment
+        th Overdue
+        th Date
         th
     tbody
-        each val in array.length ? array : ['You haven\'t posted any plants!']
+        each val in array.length ? array : ['You haven\'t requested any loans!']
           tr
             td(id="name_"+val.id)= val.loanTitle
             td= val.loanDescription
             td= val.amountWanted
             td= val.amountLoaned
-            if(val.dueDate)
-              td= ((val.dueDate.getMonth() + 1) + "/" + val.dueDate.getDate() + "/" + val.dueDate.getFullYear() + " " + val.dueDate.getHours() + ":" + val.dueDate.getMinutes())
-            else
-              td
-            td
-              a.btn.btn-default(href='/plant/edit/' + val._id, role='button') View details »
-            td
-              button.btn.btn-warning(id=val.id, type='button', data-toggle='modal', data-target='#myModal')
-               | Remove
+            td= val.waitingForFunding
+            td= val.waitingForRepayment
+            td= val.overdue
+            td= ((val.dueDate.getMonth() + 1) + "/" + val.dueDate.getDate() + "/" + val.dueDate.getFullYear() + " " + val.dueDate.getHours() + ":" + val.dueDate.getMinutes())
+
     - }
   #myModal.modal.fade(role='dialog')
     .modal-dialog
