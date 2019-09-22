@@ -15,10 +15,13 @@ block content
                   =loan.loanDescription
               if(typeof loan.amountWanted !== "undefined")
                 li.list-group-item
-                  ="amountWanted: " + loan.amountWanted
+                  ="Amount Wanted: " + loan.amountWanted
               if(typeof loan.amountLoaned !== "undefined")
                 li.list-group-item
-                  ="amountLoaned: " + loan.amountLoaned
+                  ="Amount Loaned: " + loan.amountLoaned
+              if(typeof interestRate !== "undefined")
+                li.list-group-item
+                  ="Interest Rate: " + interestRate
     .row
       .contact-info(id = "info")
         if(loan.waitingForFunding === true)

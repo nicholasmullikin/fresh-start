@@ -18,9 +18,9 @@ block content
           if(typeof loan_.amountLoaned !== "undefined")
             li.list-group-item
               ="amountLoaned: $" + loan_.amountLoaned
-          if(typeof loan_.amountLoaned !== "undefined")
+          if(typeof loan_.creditScore !== "undefined")
             li.list-group-item
-              ="creditScore: " + loan_.amountLoaned
+              ="creditScore: " + loan_.creditScore
           if(typeof payment.state !== "undefined")
             li.list-group-item
               ="State: " + payment.state
