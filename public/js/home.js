@@ -44,7 +44,7 @@ function add(zip, page) {
                                 '<div class=\'panel panel-default\' onclick="location.href=\''}${plant_msg[key].page}\';">
                                 <div class='panel-body'><h2>${plant_msg[key].loanTitle}</h2>
                                 <p>${plant_msg[key].loanDescription}</p>
-                                <div class = 'progress'><div class='progress-bar' style = 'width: ${loanProg*=100}%; background-color:#6666e0;' role='progressbar' aria-valuenow=${loanProg} aria-valuemin='0' aria-valuemax='1'></div></div>                          
+                                <div class = 'progress'><div class='progress-bar progress-bar-striped' style = 'width: ${loanProg*=100}%; background-color:#6666e0;' role='progressbar' aria-valuenow=${loanProg} aria-valuemin='0' aria-valuemax='1'></div></div>                          
                                 <p><a class='btn btn-default longbtn' href=${plant_msg[key].page}>Support Now »</a></p></div></div></div> `);
           });
         } else {
