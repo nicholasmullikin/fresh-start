@@ -53,7 +53,7 @@ exports.getPlantsInRange = (req, res) => {
       //if(name.length > 0) {
       //  var reg = new RegExp(name, "gi");
         for (let i = 0; i < result.length; i++) {
-         // if (result[i].waitingForFunding && (reg.test(result[i].loanTitle) || reg.test(result[i].loanDescription))) {
+          if (result[i].waitingForFunding) {
             results_to_send.push({
               loanTitle: result[i].loanTitle,
               loanDescription: result[i].loanDescription,
@@ -63,7 +63,7 @@ exports.getPlantsInRange = (req, res) => {
               page: `/loan/view/${result[i]._id}`,
             });
           }
-        //}
+        }
       // }
       // else {
       //   for (let i = 0; i < result.length; i++) {
