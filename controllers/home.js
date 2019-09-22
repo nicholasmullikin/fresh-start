@@ -34,7 +34,7 @@ exports.getPlantsInRange = (req, res) => {
   const results_to_send = [];
   var name = req.query.name;
   Loan.find({
-    loanTitle: name
+    loanTitle: new RegExp(name,"gi")
     },
   (err, result) => {
     if (err) {
@@ -58,7 +58,7 @@ exports.getPlantsInRange = (req, res) => {
     }
 
   });
-  return res.status(403);
+
 };
 
 
