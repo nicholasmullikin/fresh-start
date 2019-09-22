@@ -34,9 +34,18 @@ function add(zip, page) {
           $('#default').remove();
           $('#icon_1').attr('style', 'color:green');
           Object.keys(plant_msg).forEach((key) => {
-            console.log(plant_msg);
-            $('#block').append(`${'<div class=\'col-sm-3\'>' +
-                                '<div class=\'panel panel-default\' onclick="location.href=\''}${plant_msg[key].page}\';"><div class='panel-body'><h2>${plant_msg[key].loanTitle}</h2> <p>${plant_msg[key].loanDescription}</p> <p><a class='btn btn-default' href=${plant_msg[key].page}>View details »</a></p></div></div></div> `);
+            console.log(plant_msg[key]);
+            var loanProg = (plant_msg[key].amountLoaned)/(plant_msg[key].amountWanted);
+            if (loanProg>1){
+              loanProg = 1;
+            }
+            console.log(loanProg);
+            $('#block').append(`${'<div class=\'col-sm-3\' style = \'max-height: 50vh; overflow-y: auto\'>' +
+                                '<div class=\'panel panel-default\' onclick="location.href=\''}${plant_msg[key].page}\';">
+                                <div class='panel-body'><h2>${plant_msg[key].loanTitle}</h2>
+                                <p>${plant_msg[key].loanDescription}</p>
+                                <div class = 'progress'><div class='progress-bar' style = 'width: ${loanProg*=100}%; background-color:#6666e0;' role='progressbar' aria-valuenow=${loanProg} aria-valuemin='0' aria-valuemax='1'></div></div>                          
+                                <p><a class='btn btn-default longbtn' href=${plant_msg[key].page}>Support Now »</a></p></div></div></div> `);
           });
         } else {
           $('#default').remove();

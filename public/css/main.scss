@@ -180,3 +180,40 @@ canvas, img {
 .carousel-caption{
   top:45vh
 }
+
+.panel-primary{
+  border-color:#3a613a;
+}
+.panel-heading{
+  background-color:#3a613a !important;
+}
+
+//btn
+.longbtn{
+  width:100%;
+  color: beige;  
+  background-color:#8fbc8f;
+  border:none;
+}
+.longbtn:hover, .longbtn:focus, .longbtn:active, .longbtn:active:hover{
+  background-color: #4d814d;
+}
+
+.btn{
+  color:beige;
+  background-color:#8fbc8f;
+  border:none;
+}
+
+.btn:hover, .btn:focus, .btn:active{
+  background-color: #4d814d;
+}
+
+#previous, #next{
+  color:beige;
+  background-color:#8fbc8f;
+  border:none;
+}
+#previous:hover, #next:hover, #previous:focus, #next:focus, #previous:active, #next:active{
+  background-color: #4d814d;
+}
