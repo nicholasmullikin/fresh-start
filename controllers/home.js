@@ -45,7 +45,7 @@ exports.getPlantsInRange = (req, res) => {
       console.log(err);
       return res.status(402);
     }
-    if (result != undefined) {
+    if (result !== undefined) {
       for (let i = 0; i < result.length; i++) {
         results_to_send[i] = {
           loanTitle: result[i].loanTitle,

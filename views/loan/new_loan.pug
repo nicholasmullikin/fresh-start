@@ -6,9 +6,9 @@ block content
   form.form-horizontal(role='form', method='POST')
     input(type='hidden', name='_csrf', value=_csrf)
     .form-group
-      label.col-sm-3.control-label(for="loanName") Loan Name
+      label.col-sm-3.control-label(for="loanTitle") Loan Title
       .col-sm-7
-        input.form-control(type='text', name='loanName', id='loanName', placeholder='Loan Name', autofocus, required)
+        input.form-control(type='text', name='loanTitle', id='loanTitle', placeholder='Loan Title', autofocus, required)
     .form-group
       label.col-sm-3.control-label(for='loanDescription') Loan Description
       .col-sm-7

@@ -1,0 +1,40 @@
+extends ../layout
+
+block content
+  .page-header
+    h3 Invest
+    .panel.panel-primary
+      .panel-heading
+        h3.panel-title Loan Information
+      .panel-body
+        ul.list-group
+        if(typeof loan_ !== "undefined")
+          if(typeof loan_.loanDescription !== "undefined")
+            li.list-group-item
+              =loan_.loanDescription
+          if(typeof loan_.amountWanted !== "undefined")
+            li.list-group-item
+              ="amountWanted: $" + loan_.amountWanted
+          if(typeof loan_.amountLoaned !== "undefined")
+            li.list-group-item
+              ="amountLoaned: $" + loan_.amountLoaned
+          if(typeof loan_.amountLoaned !== "undefined")
+            li.list-group-item
+              ="creditScore: " + loan_.amountLoaned
+
+  form.form-horizontal(id='signup-form', method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group
+      label.col-sm-3.control-label(for='amount') Amount
+      .col-sm-7
+        input.form-control(type='number', name='amount', id='amount', required)
+    .form-group
+      label.col-sm-3.control-label(for='confirmation') Confirmation
+      .col-sm-7
+        | I agree that there is no guarantee that I will receive any money as part of investing in one of Fresh Start's users
+        input.form-control(type='checkbox', name='confirmation', id='confirmation', required)
+    .form-group
+      .col-sm-offset-3.col-sm-7
+        button.btn.btn-success(type='submit')
+          i.fa.fa-user-plus
+          | Invest

@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt-nodejs');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
-var ObjectId = mongoose.Schema.Types.ObjectId;
+const ObjectId = mongoose.Schema.Types.ObjectId;
 const userSchema = new mongoose.Schema({
   email: {type: String, unique: true},
   password: String,
@@ -13,9 +13,7 @@ const userSchema = new mongoose.Schema({
   applications: [{
     id: ObjectId
   }],
-
   tokens: Array,
-
   profile: {
     location: String,
   },
