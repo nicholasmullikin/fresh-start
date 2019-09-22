@@ -176,6 +176,8 @@ app.use(express.static(path.join(__dirname, 'public'), {maxAge: 31557600000}));
 /**
  * Primary app routes.
  */
+app.get('/info', homeController.info);
+app.get('/info', homeController.credits);
 app.get('/', homeController.index);
 app.get('/api/loan', homeController.getPlantsInRange);
 
