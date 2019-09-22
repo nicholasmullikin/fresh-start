@@ -21,11 +21,6 @@ const userSchema = new mongoose.Schema({
   paypalId: String,
   loaner: Boolean,
 
-
-
-
-
-
 }, {timestamps: true});
 
 /**

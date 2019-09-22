@@ -87,6 +87,33 @@ exports.checkPostLoan = [
   //   check('phone_number', 'Phone number is invalid').isMobilePhone('any'),
   // ]),
 ];
+
+function countActive(applications, callback) {
+  var counter = 0;
+  var waitCounter = 0;
+  for(var i = 0; i < applications.length; i++){
+    Loan.findOne({
+      _id: applications[i].id,
+    }, (err, loan) => {
+      if (err) {
+        req.flash('errors', {
+          msg: 'Not a valid loan id',
+        });
+        return res.redirect('/');
+      }
+      if(loan) {
+        if (loan.waitingForFunding === true || loan.waitingForRepayment === true || loan.overdue === true) {
+          counter++;
+        }
+      }
+      waitCounter++;
+      if(waitCounter === applications.length){
+          callback(counter);
+      }
+    });
+  }
+}
+
 exports.postLoan = (req, res) => {
   if (!req.user) {
     req.flash('errors', {
@@ -109,58 +136,55 @@ exports.postLoan = (req, res) => {
     }
   })
     .then((user) => {
-      if(user.applications.length > 0){
-        req.flash('errors', {
-          msg: 'You can only have one loan at a time',
-        });
-        return res.redirect('back');
-      }
-      req.body.loanTitle = xssFilters.inHTMLData(req.body.loanTitle);
-      req.body.loanDescription = xssFilters.inHTMLData(req.body.loanDescription);
-      req.body.amount = xssFilters.inHTMLData(req.body.amount);
-      req.body.name = xssFilters.inHTMLData(req.body.name);
-      req.body.dueDate = xssFilters.inHTMLData(req.body.dueDate);
-      req.body.email = xssFilters.inHTMLData(req.body.email);
-      req.body.phone_number = xssFilters.inHTMLData(req.body.phone_number);
-
-
-
-      const loan = new Loan({
-        loanTitle: req.body.loanTitle,
-        loanDescription: req.body.loanDescription,
-        amountWanted: req.body.amount,
-        amountLoaned: 0,
-        creditScore: user.creditScore,
-        dueDate: req.body.dueDate,
-        user: req.user._id,
-        contact_info: {
-          email: req.body.email,
-          phone_number: req.body.phone_number,
-        },
-        waitingForFunding: 1,
-        waitingForRepayment: 0,
-        overdue: 0,
-      });
-
-      loan.save((err, loan) => {
-        if (err) {
-          console.log(err);
-          req.flash('errors', err);
+      countActive(user.applications, (counter) => {
+        if(counter > 0) {
+          req.flash('errors', {
+            msg: 'You can only have one loan at a time',
+          });
           return res.redirect('back');
         }
-        user.applications.push({
-          id: user._id
+        req.body.loanTitle = xssFilters.inHTMLData(req.body.loanTitle);
+        req.body.loanDescription = xssFilters.inHTMLData(req.body.loanDescription);
+        req.body.amount = xssFilters.inHTMLData(req.body.amount);
+        req.body.name = xssFilters.inHTMLData(req.body.name);
+        req.body.dueDate = xssFilters.inHTMLData(req.body.dueDate);
+        req.body.email = xssFilters.inHTMLData(req.body.email);
+        req.body.phone_number = xssFilters.inHTMLData(req.body.phone_number);
+        const loan = new Loan({
+          loanTitle: req.body.loanTitle,
+          loanDescription: req.body.loanDescription,
+          amountWanted: req.body.amount,
+          amountLoaned: 0,
+          creditScore: user.creditScore,
+          dueDate: req.body.dueDate,
+          user: req.user._id,
+          contact_info: {
+            email: req.body.email,
+            phone_number: req.body.phone_number,
+          },
+          waitingForFunding: 1,
+          waitingForRepayment: 0,
+          overdue: 0,
         });
-        user.save((err) => {
+
+        loan.save((err, loan) => {
           if (err) {
             console.log(err);
+            req.flash('errors', err);
+            return res.redirect('back');
           }
+          user.applications.push({
+            id: loan._id
+          });
+          user.save((err) => {
+            if (err) {
+              console.log(err);
+            }
+          });
+
+          return res.redirect(`/loan/view/${loan._id}`);
         });
-
-        return res.redirect(`/loan/view/${loan._id}`);
       });
-
-
 
     }, (err) => {
       console.log(err);
@@ -545,7 +569,6 @@ exports.postLoanEditImages = (req, res) => {
     });
 };
 
-
 /**
  * GET /loan/postings
  * Show all posting by a user
@@ -566,6 +589,13 @@ exports.loanListings = (req, res) => {
   }));
 };
 
+function removeApplication(applications, appId) {
+  for (let i = 0; i < applications.length; i++) {
+    if (applications[i].id == appId) {
+      applications.pop();
+    }
+  }
+}
 /**
  * DELETE /loan/edit/:id
  * Remove a posting
@@ -583,12 +613,16 @@ exports.deleteLoan = (req, res) => {
         if (loan === null) {
           res.redirect('/');
         }
-        for (let i = 0; i < loan.pictures.length; i++) {
-          Loan.deleteImage(loan.pictures[i]);
-        }
         Loan.findByIdAndRemove(mongoose.mongo.ObjectId(req.params.id), (err) => {
           console.log(err);
         });
+        removeApplication(user.applications, req.params.id);
+        user.save((err) => {
+          if (err) {
+            console.log(err);
+          }
+        });
+
       }
     });
   });

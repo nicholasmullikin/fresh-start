@@ -12,7 +12,10 @@ block content
         th Loan Description
         th Amount Wanted
         th Amount Loaned
-        th
+        th Waiting For Funding
+        th Waiting For Repayment
+        th Overdue
+        th Date
         th
     tbody
         each val in array.length ? array : ['You haven\'t posted any plants!']
@@ -21,6 +24,9 @@ block content
             td= val.loanDescription
             td= val.amountWanted
             td= val.amountLoaned
+            td= val.waitingForFunding
+            td= val.waitingForRepayment
+            td= val.overdue
             if(val.dueDate)
               td= ((val.dueDate.getMonth() + 1) + "/" + val.dueDate.getDate() + "/" + val.dueDate.getFullYear() + " " + val.dueDate.getHours() + ":" + val.dueDate.getMinutes())
             else
