@@ -35,7 +35,7 @@ const userController = require('./controllers/user');
 // const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
 const loanController = require('./controllers/loan');
-
+const creditController = require('./controllers/credit');
 /**
  * API keys and Passport configuration.
  */
@@ -179,6 +179,8 @@ app.use(express.static(path.join(__dirname, 'public'), {maxAge: 31557600000}));
 app.get('/', homeController.index);
 app.get('/api/loan', homeController.getPlantsInRange);
 
+app.get('/credit', creditController.getCredit);
+
 app.get('/login', userController.getLogin);
 app.post('/login', userController.checkPostLogin, userController.postLogin);
 app.get('/logout', userController.logout);
@@ -310,7 +312,7 @@ app.get('/auth/pinterest/callback', passport.authorize('pinterest', { failureRed
  * Error Handler.
  */
 app.use((req, res) => res.render('not_found', {
-  title: 'Page Not Found - Plant Share',
+  title: 'Page Not Found - Fresh Start',
 }));
 
 if (process.env.NODE_ENV === 'development') {

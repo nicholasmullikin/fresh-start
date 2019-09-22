@@ -18,7 +18,7 @@ block content
         th Date
         th
     tbody
-        each val in array.length ? array : ['You haven\'t posted any plants!']
+        each val in array.length ? array : ['You haven\'t requested any loans!']
           tr
             td(id="name_"+val.id)= val.loanTitle
             td= val.loanDescription
@@ -32,7 +32,7 @@ block content
             else
               td
             td
-              a.btn.btn-default(href='/plant/edit/' + val._id, role='button') View details »
+              a.btn.btn-default(href='/loan/view/' + val._id, role='button') View details »
             td
               button.btn.btn-warning(id=val.id, type='button', data-toggle='modal', data-target='#myModal')
                | Remove

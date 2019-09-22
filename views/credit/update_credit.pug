@@ -1,0 +1,38 @@
+extends ../layout
+block content
+  .jumbotron
+    h2.display-4 Current Credit Score:
+
+  table.table.table-condensed
+    - if (array.length === 0){
+      | You have no postings
+    - } else {
+      thead
+        tr
+          th Loan Title
+          th Loan Description
+          th Amount Wanted
+          th Amount Loaned
+          th Waiting For Funding
+          th Waiting For Repayment
+          th Overdue
+          th Date
+          th
+      tbody
+        each val in array.length ? array : ['You haven\'t requested any loans!']
+          tr
+            td(id="name_"+val.id)= val.loanTitle
+            td= val.loanDescription
+            td= val.amountWanted
+            td= val.amountLoaned
+            td= val.waitingForFunding
+            td= val.waitingForRepayment
+            td= val.overdue
+            td= ((val.dueDate.getMonth() + 1) + "/" + val.dueDate.getDate() + "/" + val.dueDate.getFullYear() + " " + val.dueDate.getHours() + ":" + val.dueDate.getMinutes())
+    - }
+  form.form-horizontal(id='signup-form', method='POST')
+    .form-group
+      .col-sm-offset-3.col-sm-7
+        button.btn.btn-success(type='submit')
+          i.fa.fa-user-plus
+          | Reanalyze credit

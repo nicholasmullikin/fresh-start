@@ -9,6 +9,18 @@ const uuidv1 = require('uuid/v1');
 const User = require('../models/User');
 const Loan = require('../models/Loan');
 const Payment = require('../models/Payment');
+
+function getInterestRate(credit) {
+  var cred = credit;
+  if(cred > 100){
+    cred = 100;
+  }
+  else if(cred < 0){
+    cred = 0;
+  }
+  return (100 - credit) / 100.0;
+}
+
 /**
  * GET /loan/view/:id
  * Show the info of a loan.
@@ -31,6 +43,7 @@ exports.loanInfo = (req, res) => {
       title: loan.loanTitle,
       name: 'loan_info',
       loan: loan,
+      interestRate: getInterestRate(loan.creditScore)
     });
   });
 };
@@ -699,7 +712,26 @@ exports.pay = (req, res) => {
  * Get info to pay for loan
  */
 exports.payMoney = (req, res) => {
-  const paymentJSON = Payment.makePaymentJSON(100, "loan title", req);
+  Loan.findOne({
+    _id: mongoose.Types.ObjectId(req.params.id),
+  }, (err, loan) => {
+    if (err) {
+      req.flash('errors', {
+        msg: 'Not a valid loan id',
+      });
+      return res.redirect('/');
+    }
+    if (loan === null || loan.loanTitle === null) {
+      req.flash('errors', {
+        msg: 'Not a valid loan id',
+      });
+      return res.redirect('/');
+    }
+    loan.amountLoaned += parseInt(req.body.amount);
+    loan.interestRate = getInterestRate(loan.creditScore);
+    loan.save();
+  });
+  const paymentJSON = Payment.makePaymentJSON(req.body.amount, "loan title", req);
   Payment.makePayment(paymentJSON, (link) => {
     if(link !== null){
       return res.redirect(link);
@@ -713,8 +745,29 @@ exports.payMoney = (req, res) => {
   });
 };
 
-function getActiveApplicationID(applications) {
-  return applications[0].id;
+function getActiveApplicationID(applications, callback) {
+  var waitCounter = 0;
+  for(var i = 0; i < applications.length; i++){
+    Loan.findOne({
+      _id: applications[i].id,
+    }, (err, loan) => {
+      if (err) {
+        req.flash('errors', {
+          msg: 'Not a valid loan id',
+        });
+        return res.redirect('/');
+      }
+      if(loan) {
+        if (loan.waitingForFunding === true || loan.waitingForRepayment === true || loan.overdue === true) {
+          callback(loan);
+        }
+      }
+      waitCounter++;
+      if(waitCounter === applications.length){
+        callback(null);
+      }
+    });
+  }
 }
 
 exports.processPayment = (req, res) => {
@@ -732,16 +785,21 @@ exports.processPayment = (req, res) => {
           console.log(err);
         }
       }).then((user) => {
-        Loan.findOne({
-          _id: getActiveApplicationID(user.applications),
-        }, (err, loan) => {
-          if (err) {
-            return handleError(err);
+        getActiveApplicationID(user.applications, (loanId)=>{
+          if(loanId!==null) {
+            Loan.findOne({
+              _id: loanId,
+            }, (err, loan) => {
+              if (err) {
+                return handleError(err);
+              }
+              return res.render('payment/pay_receipt', {
+                title: "Investment Sucessful",
+                payment: result,
+                loan_: loan
+              });
+            });
           }
-          return res.render('payment/pay_receipt', {
-            title: "Investment Sucessful",
-            payment: result,
-            loan_:loan});
         });
       });
     }
