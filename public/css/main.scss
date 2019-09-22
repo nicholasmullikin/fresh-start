@@ -180,3 +180,24 @@ canvas, img {
 .carousel-caption{
   top:45vh
 }
+
+
+//btn
+.longbtn{
+  width:100%;
+  color: beige;  
+  background-color:#8fbc8f;
+  border:none;
+}
+.longbtn:hover, .longbtn:focus, .longbtn:active, .longbtn:active:hover{
+  background-color: #4d814d;
+}
+
+#previous, #next{
+  color:beige;
+  background-color:#8fbc8f;
+  border:none;
+}
+#previous:hover, #next:hover, #previous:focus, #next:focus, #previous:active, #next:active{
+  background-color: #4d814d;
+}

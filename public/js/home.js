@@ -35,8 +35,14 @@ function add(zip, page) {
           $('#icon_1').attr('style', 'color:green');
           Object.keys(plant_msg).forEach((key) => {
             console.log(plant_msg);
-            $('#block').append(`${'<div class=\'col-sm-3\'>' +
-                                '<div class=\'panel panel-default\' onclick="location.href=\''}${plant_msg[key].page}\';"><div class='panel-body'><h2>${plant_msg[key].loanTitle}</h2> <p>${plant_msg[key].loanDescription}</p> <p><a class='btn btn-default' href=${plant_msg[key].page}>View details »</a></p></div></div></div> `);
+            var loanProg = $(plant_msg[key].amountLoaned)/$(plant_msg[key].amountWanted);
+            console.log(loanProg);
+            $('#block').append(`${'<div class=\'col-sm-3\' style = \'max-height: 40vh; overflow-y: auto\'>' +
+                                '<div class=\'panel panel-default\' onclick="location.href=\''}${plant_msg[key].page}\';">
+                                <div class='panel-body'><h2>${plant_msg[key].loanTitle}</h2>
+                                <p>${plant_msg[key].loanDescription}</p>
+                                <div class = 'progress'><div class='progress-bar' role='progressbar' aria-valuenow=loanProg aria-valuemin='0' aria-valuemax='100'></div></div>                          
+                                <p><a class='btn btn-default longbtn' href=${plant_msg[key].page}>Support Now »</a></p></div></div></div> `);
           });
         } else {
           $('#default').remove();
