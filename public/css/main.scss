@@ -91,9 +91,6 @@ textarea {
       .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
         color: #573f72;
         background-color: transparent; }
-    .navbar-default .navbar-nav .open .dropdown-menu > .active > a, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
-      color: #fff;
-      background-color: #a38bbf; }
     .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a, .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:focus {
       color: #ccc;
       background-color: transparent; } }
@@ -165,9 +162,21 @@ textarea {
 .flexrow > [class*='col-'] {
   display: flex;
   flex-direction: column;
-  justify-content: center
+  justify-content: center;
+}
+
+#alignEnd{
+  align-items:flex-end;
 }
 
 canvas, img {
   max-width: 100%;
+}
+
+#maxCarousel{
+  max-height: 75vh;
+}
+
+.carousel-caption{
+  top:45vh
 }

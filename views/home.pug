@@ -6,10 +6,45 @@ block content
             h1 Fresh Start
             p.lead A system that works for everyone
         .col-sm-3
-        .col-sm-3
+        .col-sm-3(id = "alignEnd")
             .form-group
                 .input-group
                     input.form-control(type='text', name= 'search', id = 'search', placeholder='Search')
+    .row
+        .container
+          #myCarousel.carousel.slide(data-ride='carousel')
+            // Indicators
+            ol.carousel-indicators
+              li.active(data-target='#myCarousel' data-slide-to='0')
+              li(data-target='#myCarousel' data-slide-to='1')
+              li(data-target='#myCarousel' data-slide-to='2')
+            // Wrapper for slides
+            .carousel-inner(id = "maxCarousel")
+              .item.active
+                img(src='/img/cash.jpg' alt='Investment' style='width:100%;')
+                .carousel-caption
+                    h3 A Simple Lending System
+                    p Lenders request a loan. Borrowers contribute as much as they want.
+                    p Lenders get the financial help they need. Borrowers earn a reliable interest rate.
+              .item
+                img(src='/img/plant.jpg' alt='Plant' id='plant' style='width:100%;')
+                .carousel-caption(style = 'top:2vh; color:black;')
+                    h3 Growing Success Stories
+                    p Lack of capital is a huge issue that effectively taxes the poor and stifles development.
+                    p Fresh Start helps pick people up off their feet, cultivating their dreams and their lives.
+              .item
+                img(src='/img/view.jpg' alt='View' style='width:100%;')
+                .carousel-caption
+                    h3 Amazing Transparency
+                    p Fresh Start's novel credit score is based only on openly available transactions and data.
+                    p No more damning mistakes. No more mysterious system controlled by the banks and credit unions.
+            // Left and right controls
+            a.left.carousel-control(href='#myCarousel' data-slide='prev')
+              span.glyphicon.glyphicon-chevron-left
+              span.sr-only Previous
+            a.right.carousel-control(href='#myCarousel' data-slide='next')
+              span.glyphicon.glyphicon-chevron-right
+              span.sr-only Next
     hr
     .row(id = "block")
     .jumbotron(id="default")
