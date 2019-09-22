@@ -17,21 +17,9 @@ exports.index = (req, res) => {
  */
 exports.info = (req, res) => {
   res.render('info', {
-    title: 'Home',
+    title: 'Info',
   });
 };
-
-/**
- * GET /credits
- * info page.
- */
-exports.credits = (req, res) => {
-  res.render('credits', {
-    title: 'credits',
-  });
-};
-
-
 
 /**
  * GET /api/plants

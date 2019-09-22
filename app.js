@@ -137,7 +137,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 app.use((req, res, next) => {
-  if ((new RegExp('plant/upload').test(req.path) && req.method === 'POST') || (new RegExp('edit').test(req.path) && req.method === 'DELETE') || (new RegExp('info').test(req.path) && req.method === 'POST') || (new RegExp('plant/editUpload').test(req.path) && req.method === 'POST')) {
+  if ((new RegExp('plant/upload').test(req.path) && req.method === 'POST') || (new RegExp('edit').test(req.path) && req.method === 'DELETE') || (new RegExp('info').test(req.path) && req.method === 'POST') || (new RegExp('credit').test(req.path) && req.method === 'POST')) {
     next();
   } else {
     lusca.csrf()(req, res, next);
@@ -177,12 +177,11 @@ app.use(express.static(path.join(__dirname, 'public'), {maxAge: 31557600000}));
  * Primary app routes.
  */
 app.get('/info', homeController.info);
-app.get('/info', homeController.credits);
 app.get('/', homeController.index);
 app.get('/api/loan', homeController.getPlantsInRange);
 
 app.get('/credit', creditController.getCredit);
-
+app.post('/credit', creditController.calcCredit);
 app.get('/login', userController.getLogin);
 app.post('/login', userController.checkPostLogin, userController.postLogin);
 app.get('/logout', userController.logout);

@@ -13,16 +13,17 @@
       ul.nav.navbar-nav
         li(class=(title === 'Home'))
           a(href='/') Home
-        li(class=(title === 'New Plant') ? 'active' : undefined)
-          a(href='/loan/new') Post new loan
+        li(class=(title === 'New Loan') ? 'active' : undefined)
+          a(href='/loan/new') Request Loan
         if user
           li(class=(title === 'Your Postings') ? 'active' : undefined)
             a(href='/loan/postings') Postings
-        li(class=(title === 'info') ? 'active' : undefined)
+        li(class=(title === 'Info') ? 'active' : undefined)
           a(href='/info') Info
         li(class=(title === 'Contact') ? 'active' : undefined)
           a(href='/contact') Contact
-
+        li(class=(title === 'Your Credit') ? 'active' : undefined)
+          a(href='/credit') Credit Check
 
       ul.nav.navbar-nav.navbar-right
         if !user

@@ -1,8 +1,9 @@
 extends ../layout
 block content
   .jumbotron
-    h2.display-4 Current Credit Score:
-
+    h2.display-4 Current Credit Score: #{creditScore}
+    hr.my-4
+    p Scores start at 20 and are added or subtracted based on loan payments
   table.table.table-condensed
     - if (array.length === 0){
       | You have no postings
@@ -16,10 +17,11 @@ block content
           th Waiting For Funding
           th Waiting For Repayment
           th Overdue
+          th Failed
           th Date
-          th
+          th Impact on Credit
       tbody
-        each val in array.length ? array : ['You haven\'t requested any loans!']
+        each val, index in array.length ? array : ['You haven\'t requested any loans!']
           tr
             td(id="name_"+val.id)= val.loanTitle
             td= val.loanDescription
@@ -28,7 +30,9 @@ block content
             td= val.waitingForFunding
             td= val.waitingForRepayment
             td= val.overdue
+            td= val.failed
             td= ((val.dueDate.getMonth() + 1) + "/" + val.dueDate.getDate() + "/" + val.dueDate.getFullYear() + " " + val.dueDate.getHours() + ":" + val.dueDate.getMinutes())
+            td= creditImpact[index]
     - }
   form.form-horizontal(id='signup-form', method='POST')
     .form-group
