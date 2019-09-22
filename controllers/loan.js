@@ -176,7 +176,8 @@ exports.postLoan = (req, res) => {
           waitingForFunding: 1,
           waitingForRepayment: 0,
           overdue: 0,
-          failed: 0
+          failed: 0,
+          interestRate: getInterestRate(user.creditScore)
         });
 
         loan.save((err, loan) => {

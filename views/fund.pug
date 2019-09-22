@@ -12,59 +12,25 @@ block content
                 .progress-bar.progress-bar-striped(role='progressbar' style="width: "+ (loan.amountLoaned / loan.amountWanted * 100) + "%" aria-valuenow='25' aria-valuemin='0' aria-valuemax='100')
 
             h4(style = pStyles) $#{loan.amountLoaned} out of $#{loan.amountWanted} has been raised
-
-            table.table
-                thead
-                    tr
-                        th(scope='col') #
-                        th(scope='col') First
-                        th(scope='col') Last
-                        th(scope='col') Handle
-                tbody
-                    tr
-                        th(scope='row') 1
-                        td Mark
-                        td Otto
-                        td @mdo
-                    tr
-                        th(scope='row') 2
-                        td Jacob
-                        td Thornton
-                        td @fat
-                    tr
-                        th(scope='row') 3
-                        td Larry
-                        td the Bird
-                        td @twitter
-        - } else {
+            h4 The total due will be: $#{Math.pow((1+loan.interestRate), (totalTime/(365*oneDay))) * loan.amountWanted}
+            h4 T#{loan.interestRate}
+        - } else if(loan.waitingForRepayment) {
             h3(style = pStyles) Your loan is sent
                 br
                 .progress(style = 'height:50px')
                     .progress-bar.progress-bar-striped(role='progressbar' style="width: " + (timePassed / totalTime * 100) + "%" aria-valuenow='25' aria-valuemin='0' aria-valuemax='100')
 
                 h4(style = pStyles) #{(timePassed/oneDay).toFixed(2)} days out of #{(totalTime/oneDay).toFixed(0)} days passed
-
-                table.table
-                    thead
-                        tr
-                            th(scope='col') #
-                            th(scope='col') First
-                            th(scope='col') Last
-                            th(scope='col') Handle
-                    tbody
-                        tr
-                            th(scope='row') 1
-                            td Mark
-                            td Otto
-                            td @mdo
-                        tr
-                            th(scope='row') 2
-                            td Jacob
-                            td Thornton
-                            td @fat
-                        tr
-                            th(scope='row') 3
-                            td Larry
-                            td the Bird
-                            td @twitter
+                h4 The total due will be: $#{Math.pow((1+loan.interestRate), (totalTime/(365*oneDay)) * loan.amountLoaned)}
+        - }else if(loan.overdue){
+            h2(style = pStyles) Warning: Loan is overdue!
+            h3(style = pStyles) Credit Score will be impacted
+            br
+            h4(style = pStyles) #{((timePassed - totalTime)/oneDay).toFixed(2)} days overdue
+        - }else if(loan.failed){
+            h2(style = pStyles) Sorry, this fund failed
+            h3(style = pStyles) Credit Score will not be impacted
+            br
+            h4(style = pStyles) Please try again
         - }
+
