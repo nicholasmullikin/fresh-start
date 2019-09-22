@@ -33,10 +33,10 @@ function calculateCreditImpact (loans){
   for(var i = 0; i < loans.length; i++){
     let impact = 0;
     if(loans[i].overdue){
-      impact = loans[i].amountLoaned/100 * -1;
+      impact = loans[i].amountLoaned/10 * -1;
     }
     else{
-      impact = loans[i].amountLoaned / 100;
+      impact = loans[i].amountLoaned / 10;
     }
     impacts.push(impact);
   }

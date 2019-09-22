@@ -31,15 +31,14 @@ function add(zip, page) {
       contentType: 'application/json; charset=utf-8',
       success(plant_msg) {
         if (plant_msg.length !== 0) {
+          console.log(plant_msg.length);
           $('#default').remove();
           $('#icon_1').attr('style', 'color:green');
           Object.keys(plant_msg).forEach((key) => {
-            console.log(plant_msg[key]);
             var loanProg = (plant_msg[key].amountLoaned)/(plant_msg[key].amountWanted);
             if (loanProg>1){
               loanProg = 1;
             }
-            console.log(loanProg);
             $('#block').append(`${'<div id = \'lessMargin\'class=\'col-sm-3\' style = \'max-height: 50vh; overflow-y: auto\'>' +
                                 '<div class=\'panel panel-default\' onclick="location.href=\''}${plant_msg[key].page}\';">
                                 <div class='panel-body'><h2>${plant_msg[key].loanTitle}</h2>
@@ -63,8 +62,8 @@ function update(page) {
   $('#icon_1').attr('style', 'display:none');
   $('#icon_2').attr('style', '');
   localStorage.setItem('search', search.val());
-  if (search.val().length > 2) {
+  //if (search.val().length > 2) {
     $('#block').empty();
     add(search.val(), page);
-  }
+ // }
 }

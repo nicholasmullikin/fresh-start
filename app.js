@@ -81,7 +81,7 @@ app.use(sass({
 function unacceptable(host) {
   return [
     /localhost/gi,
-    /plant-share.herokuapp.com/gi,
+    /fresh--start.herokuapp.com/gi,
     /nominatim.openstreetmap.org/gi,
     /api.inaturalist.org/gi,
     /api.tiles.mapbox.com/gi,

@@ -43,7 +43,6 @@ exports.getPlantsInRange = (req, res) => {
   const results_to_send = [];
   var name = req.query.name;
   Loan.find({
-    loanTitle: new RegExp(name,"gi")
     },
   (err, result) => {
     if (err) {
@@ -51,16 +50,33 @@ exports.getPlantsInRange = (req, res) => {
       return res.status(402);
     }
     if (result !== undefined) {
-      for (let i = 0; i < result.length; i++) {
-        if(result[i].waitingForFunding) {
-          results_to_send.push({
-            loanTitle: result[i].loanTitle,
-            loanDescription: result[i].loanDescription,
-            amountWanted: result[i].amountWanted,
-            amountLoaned: result[i].amountLoaned,
-            interestRate: result[i].interestRate,
-            page: `/loan/view/${result[i]._id}`,
-          });
+      if(name.length > 0) {
+        var reg = new RegExp(name, "gi");
+        for (let i = 0; i < result.length; i++) {
+          if (result[i].waitingForFunding && (reg.test(result[i].loanTitle) || reg.test(result[i].loanDescription))) {
+            results_to_send.push({
+              loanTitle: result[i].loanTitle,
+              loanDescription: result[i].loanDescription,
+              amountWanted: result[i].amountWanted,
+              amountLoaned: result[i].amountLoaned,
+              interestRate: result[i].interestRate,
+              page: `/loan/view/${result[i]._id}`,
+            });
+          }
+        }
+      }
+      else {
+        for (let i = 0; i < result.length; i++) {
+          if (result[i].waitingForFunding) {
+            results_to_send.push({
+              loanTitle: result[i].loanTitle,
+              loanDescription: result[i].loanDescription,
+              amountWanted: result[i].amountWanted,
+              amountLoaned: result[i].amountLoaned,
+              interestRate: result[i].interestRate,
+              page: `/loan/view/${result[i]._id}`,
+            });
+          }
         }
       }
       return res.status(250).send(results_to_send);
