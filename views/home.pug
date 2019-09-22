@@ -18,26 +18,33 @@ block content
               li.active(data-target='#myCarousel' data-slide-to='0')
               li(data-target='#myCarousel' data-slide-to='1')
               li(data-target='#myCarousel' data-slide-to='2')
+              li(data-target='#myCarousel' data-slide-to='3')
             // Wrapper for slides
             .carousel-inner(id = "maxCarousel")
-              .item.active
-                img(src='/img/cash.jpg' alt='Investment' style='width:100%;')
-                .carousel-caption
-                    h3 A Simple Lending System
-                    p Lenders request a loan. Borrowers contribute as much as they want.
-                    p Lenders get the financial help they need. Borrowers earn a reliable interest rate.
-              .item
-                img(src='/img/plant.jpg' alt='Plant' id='plant' style='width:100%;')
-                .carousel-caption(style = 'top:2vh; color:black;')
-                    h3 Growing Success Stories
-                    p Lack of capital is a huge issue that effectively taxes the poor and stifles development.
-                    p Fresh Start helps pick people up off their feet, cultivating their dreams and their lives.
-              .item
-                img(src='/img/view.jpg' alt='View' style='width:100%;')
-                .carousel-caption
-                    h3 Amazing Transparency
-                    p Fresh Start's novel credit score is based only on openly available transactions and data.
-                    p No more damning mistakes. No more mysterious system controlled by the banks and credit unions.
+                .item.active
+                    img(src='/img/cash.jpg' alt='Investment' style='width:100%;')
+                    .carousel-caption
+                        h3 A Simple Lending System
+                        p Lenders request a loan. Borrowers contribute as much as they want.
+                        p Lenders get the financial help they need. Borrowers earn a reliable interest rate.
+                .item
+                    img(src='/img/plant.jpg' alt='Plant' id='plant' style='width:100%;')
+                    .carousel-caption(style = 'top:2vh; color:black;')
+                        h3 Growing Success Stories
+                        p Lack of capital is a huge issue that effectively taxes the poor and stifles development.
+                        p Fresh Start helps pick people up off their feet, cultivating their dreams and their lives.
+                .item
+                    img(src='/img/view.jpg' alt='View' style='width:100%;')
+                    .carousel-caption
+                        h3 Amazing Transparency
+                        p Fresh Start's novel credit score is based only on openly available transactions and data.
+                        p No more damning mistakes. No more mysterious system controlled by the banks and credit unions.
+                .item
+                    img(src='/img/house.jpg' alt='View' style='width:100%;')
+                    .carousel-caption
+                        h3 Build Credit, Build Lives
+                        p With the Fresh Start system, you can take out loans as long as you have enough credit
+                        p Tackle big issues like unfair lending practices and housing inequality one loan at a time 
             // Left and right controls
             a.left.carousel-control(href='#myCarousel' data-slide='prev')
               span.glyphicon.glyphicon-chevron-left
