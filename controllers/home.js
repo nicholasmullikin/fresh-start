@@ -50,6 +50,9 @@ exports.getPlantsInRange = (req, res) => {
         results_to_send[i] = {
           loanTitle: result[i].loanTitle,
           loanDescription: result[i].loanDescription,
+          amountWanted: result[i].amountWanted,
+          amountLoaned: result[i].amountLoaned,
+          interestRate: result[i].interestRate,
           page: `/loan/view/${result[i]._id}`,
         };
       }

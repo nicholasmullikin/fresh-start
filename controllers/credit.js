@@ -18,7 +18,7 @@ exports.getCredit = (req, res) => {
       Loan.find({
         user: req.user._id,
       }, (err, loans) => res.render('loan/postings', {
-        title: 'Your Postings',
+        title: 'Your Credit',
         array: loans,
       }));
     });

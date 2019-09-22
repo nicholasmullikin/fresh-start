@@ -3,7 +3,7 @@ block content
   h2
     | Your Postings
   table.table.table-condensed
-    - if (array.length == 0){
+    - if (array.length === 0){
     | You have no postings
     - } else {
     thead
@@ -27,15 +27,8 @@ block content
             td= val.waitingForFunding
             td= val.waitingForRepayment
             td= val.overdue
-            if(val.dueDate)
-              td= ((val.dueDate.getMonth() + 1) + "/" + val.dueDate.getDate() + "/" + val.dueDate.getFullYear() + " " + val.dueDate.getHours() + ":" + val.dueDate.getMinutes())
-            else
-              td
-            td
-              a.btn.btn-default(href='/loan/view/' + val._id, role='button') View details »
-            td
-              button.btn.btn-warning(id=val.id, type='button', data-toggle='modal', data-target='#myModal')
-               | Remove
+            td= ((val.dueDate.getMonth() + 1) + "/" + val.dueDate.getDate() + "/" + val.dueDate.getFullYear() + " " + val.dueDate.getHours() + ":" + val.dueDate.getMinutes())
+
     - }
   #myModal.modal.fade(role='dialog')
     .modal-dialog
