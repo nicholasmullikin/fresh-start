@@ -21,7 +21,14 @@ exports.info = (req, res) => {
   });
 };
 
-/**
+
+exports.fund = (req, res) => {
+  res.render('fund', {
+    title: 'fund',
+  });
+};
+
+/*
  * GET /api/plants
  * Plants that are in range
  */
