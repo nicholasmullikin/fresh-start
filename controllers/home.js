@@ -21,6 +21,15 @@ exports.info = (req, res) => {
   });
 };
 
+/**
+ * GET /invest
+ * invest page.
+ */
+exports.invest = (req, res) => {
+    res.render('invest', {
+        title: 'invest',
+    });
+};
 
 
 
