@@ -40,11 +40,12 @@ function add(zip, page) {
               loanProg = 1;
             }
             console.log(loanProg);
-            $('#block').append(`${'<div class=\'col-sm-3\' style = \'max-height: 50vh; overflow-y: auto\'>' +
+            $('#block').append(`${'<div id = \'lessMargin\'class=\'col-sm-3\' style = \'max-height: 50vh; overflow-y: auto\'>' +
                                 '<div class=\'panel panel-default\' onclick="location.href=\''}${plant_msg[key].page}\';">
                                 <div class='panel-body'><h2>${plant_msg[key].loanTitle}</h2>
                                 <p>${plant_msg[key].loanDescription}</p>
-                                <div class = 'progress'><div class='progress-bar' style = 'width: ${loanProg*=100}%; background-color:#6666e0;' role='progressbar' aria-valuenow=${loanProg} aria-valuemin='0' aria-valuemax='1'></div></div>                          
+                                <div class = 'progress'><div class='progress-bar progress-bar-striped' style = 'width: ${loanProg*=100}%; background-color:#6666e0;' role='progressbar' aria-valuenow=${loanProg} aria-valuemin='0' aria-valuemax='1'></div></div>
+                                <div style = 'text-align:center; padding-bottom:10px;'><small>$${plant_msg[key].amountLoaned} of $${plant_msg[key].amountWanted} loaned</small></div>                       
                                 <p><a class='btn btn-default longbtn' href=${plant_msg[key].page}>Support Now »</a></p></div></div></div> `);
           });
         } else {

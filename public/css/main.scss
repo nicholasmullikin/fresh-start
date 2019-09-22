@@ -178,7 +178,13 @@ canvas, img {
 }
 
 .carousel-caption{
-  top:45vh
+  top:45vh;
+}
+
+@media (max-width:1024px){
+  .carousel-caption{
+    top:30vh;
+  }
 }
 
 .panel-primary{
@@ -187,7 +193,10 @@ canvas, img {
 .panel-heading{
   background-color:#3a613a !important;
 }
-
+//progress-bar
+.progress{
+  margin-bottom:0px;
+}
 //btn
 .longbtn{
   width:100%;
@@ -217,3 +226,8 @@ canvas, img {
 #previous:hover, #next:hover, #previous:focus, #next:focus, #previous:active, #next:active{
   background-color: #4d814d;
 }
+//misc
+#lessMargin h2 {
+  margin-top:8px;
+}
+
