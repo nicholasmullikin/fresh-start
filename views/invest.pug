@@ -1,0 +1,36 @@
+extends layout
+
+block content
+
+    .page-header
+        - const pStyles = {"text-align": "center", "text-transform": "uppercase" };
+        h1(style=pStyles) Invest
+
+        style.
+            p {
+                text-decoration: bold;
+            }
+        body
+
+            p(style=pStyles) Benefit others and yourself
+
+        .row.row2
+            .col-sm-4
+                img.image2(src = '/img/portfolio.png' width = '75%')
+            .col-sm-4
+                img.image3(src = '/img/interest-rate.jpg' width = '75%')
+            .col-sm-4
+                img.image4(src = '/img/dive_pic .jpg' width = '85%')
+
+        .row.row1
+            .col-sm-4
+                h3 Build a portfolio
+                p Choose from thousands of loans each with a unique story
+            .col-sm-4
+                h3 Interest Rates
+                p The return on each loan is dynamically calculated based on the credit score of the borrower
+                p Wide range of interest rates and return available for all investing styles
+            .col-sm-4
+                h3 Diversify Risk
+                p There are thousands of loans available each with different levels of risk
+                p You have the ability to invest in a range of these loans
