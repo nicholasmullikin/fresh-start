@@ -22,16 +22,14 @@ exports.info = (req, res) => {
 };
 
 /**
- * GET /credits
- * info page.
+ * GET /fund
+ * stages of loan.
  */
-exports.credits = (req, res) => {
-  res.render('credits', {
-    title: 'credits',
+exports.fund = (req, res) => {
+  res.render('fund', {
+    title: 'fund',
   });
 };
-
-
 
 /**
  * GET /api/plants
