@@ -181,6 +181,12 @@ canvas, img {
   top:45vh
 }
 
+.panel-primary{
+  border-color:#3a613a;
+}
+.panel-heading{
+  background-color:#3a613a !important;
+}
 
 //btn
 .longbtn{
@@ -190,6 +196,16 @@ canvas, img {
   border:none;
 }
 .longbtn:hover, .longbtn:focus, .longbtn:active, .longbtn:active:hover{
+  background-color: #4d814d;
+}
+
+.btn{
+  color:beige;
+  background-color:#8fbc8f;
+  border:none;
+}
+
+.btn:hover, .btn:focus, .btn:active{
   background-color: #4d814d;
 }
 
