@@ -26,7 +26,7 @@ exports.info = (req, res) => {
  * Plants that are in range
  */
 exports.getPlantsInRange = (req, res) => {
-  const results_to_send = {};
+  const results_to_send = [];
 
   Loan.getLoans((err, result) => {
     if (err) {
@@ -35,14 +35,16 @@ exports.getPlantsInRange = (req, res) => {
     }
     if (result !== undefined) {
       for (let i = 0; i < result.length; i++) {
-        results_to_send[i] = {
-          loanTitle: result[i].loanTitle,
-          loanDescription: result[i].loanDescription,
-          amountWanted: result[i].amountWanted,
-          amountLoaned: result[i].amountLoaned,
-          interestRate: result[i].interestRate,
-          page: `/loan/view/${result[i]._id}`,
-        };
+        if(result[i].waitingForFunding) {
+          results_to_send.push({
+            loanTitle: result[i].loanTitle,
+            loanDescription: result[i].loanDescription,
+            amountWanted: result[i].amountWanted,
+            amountLoaned: result[i].amountLoaned,
+            interestRate: result[i].interestRate,
+            page: `/loan/view/${result[i]._id}`,
+          });
+        }
       }
       return res.status(250).send(results_to_send);
     }
