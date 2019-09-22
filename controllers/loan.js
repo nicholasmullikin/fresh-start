@@ -93,10 +93,10 @@ exports.checkPostLoan = [
     .isISO8601(),
   check('loanType', 'Loan type must be less than 100 characters')
     .isLength({ max: 100 }),
-  // oneOf([
-  //   check('email', 'Email is invalid').isEmail(),
-  //   check('phone_number', 'Phone number is invalid').isMobilePhone('any'),
-  // ]),
+   oneOf([
+     check('email', 'Email is invalid').isEmail(),
+     check('phone_number', 'Phone number is invalid').isMobilePhone('any'),
+   ]),
 ];
 
 function countActive(applications, callback) {
@@ -194,7 +194,7 @@ exports.postLoan = (req, res) => {
             }
           });
 
-          return res.redirect(`/loan/view/${loan._id}`);
+          return res.redirect(`/fund/${loan._id}`);
         });
       });
 
@@ -640,6 +640,47 @@ exports.deleteLoan = (req, res) => {
   });
   res.sendStatus(303);
 };
+
+function getActiveLoan(loans){
+  for(var i = 0; i < loans.length; i++){
+    if(loans[i].waitingForFunding){
+      return loans[i];
+    }
+  }
+}
+
+exports.fund = (req, res) => {
+  User.findById(req.user._id, (err) => {
+    if (err) {
+      console.log(err);
+    }
+  })
+    .then((user) => {
+      Loan.findOne({
+        _id: mongoose.Types.ObjectId(req.params.id),
+      }, (err, loan) => {
+
+        if(!loan.user.equals(req.user._id)){
+          req.flash('errors', {
+            msg: 'You are not the owner',
+          });
+          return res.redirect('back');
+        }
+        var d = new Date();
+        var d1 = new Date(loan.createdAt);
+        var d2 = new Date(loan.dueDate);
+        res.render('fund', {
+          title: 'fund',
+          loan: loan,
+          user: user,
+          totalTime: d2 - d1,
+          timePassed: d - d1
+        });
+      });
+    });
+};
+
+
 
 /**
  * POST /loan/view/:id

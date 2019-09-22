@@ -27,7 +27,7 @@ function add(zip, page) {
     $.ajax({
       type: 'GET',
       dataType: 'json',
-      url: `/api/loan?page=${page - 1}`,
+      url: `/api/loan?page=${page - 1}&name=${$('#search').val()}`,
       contentType: 'application/json; charset=utf-8',
       success(plant_msg) {
         if (plant_msg.length !== 0) {
@@ -50,7 +50,7 @@ function add(zip, page) {
           });
         } else {
           $('#default').remove();
-          $('#block').append('<div class="jumbotron" id="default"><div class="h2">No one has posted any plants in your area!</div><p>You can be the first one to post!</p></div>');
+          $('#block').append('<div class="jumbotron" id="default"><div class="h2">No results found!</div></div>');
         }
       },
     });

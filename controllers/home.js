@@ -1,5 +1,5 @@
 const Loan = require('../models/Loan');
-
+const User = require('../models/User');
 /**
  * GET /
  * Home page.
@@ -22,11 +22,9 @@ exports.info = (req, res) => {
 };
 
 
-exports.fund = (req, res) => {
-  res.render('fund', {
-    title: 'fund',
-  });
-};
+
+
+
 
 /*
  * GET /api/plants
@@ -34,8 +32,11 @@ exports.fund = (req, res) => {
  */
 exports.getPlantsInRange = (req, res) => {
   const results_to_send = [];
-
-  Loan.getLoans((err, result) => {
+  var name = req.query.name;
+  Loan.find({
+    loanTitle: name
+    },
+  (err, result) => {
     if (err) {
       console.log(err);
       return res.status(402);

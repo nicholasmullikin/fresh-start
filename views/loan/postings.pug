@@ -17,6 +17,7 @@ block content
         th Overdue
         th Date
         th
+        th
     tbody
         each val in array.length ? array : ['You haven\'t requested any loans!']
           tr
@@ -28,7 +29,11 @@ block content
             td= val.waitingForRepayment
             td= val.overdue
             td= ((val.dueDate.getMonth() + 1) + "/" + val.dueDate.getDate() + "/" + val.dueDate.getFullYear() + " " + val.dueDate.getHours() + ":" + val.dueDate.getMinutes())
-
+            td
+              a.btn.btn-default(href='/fund/' + val._id, role='button') View details »
+            td
+              button.btn.btn-warning(id=val.id, type='button', data-toggle='modal', data-target='#myModal')
+                | Remove
     - }
   #myModal.modal.fade(role='dialog')
     .modal-dialog
