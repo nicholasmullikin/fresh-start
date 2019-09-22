@@ -162,9 +162,21 @@ textarea {
 .flexrow > [class*='col-'] {
   display: flex;
   flex-direction: column;
-  justify-content: center
+  justify-content: center;
+}
+
+#alignEnd{
+  align-items:flex-end;
 }
 
 canvas, img {
   max-width: 100%;
+}
+
+#maxCarousel{
+  max-height: 75vh;
+}
+
+.carousel-caption{
+  top:45vh
 }
