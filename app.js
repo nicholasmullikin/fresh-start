@@ -203,7 +203,7 @@ app.post('/loan/new/', passportConfig.isAuthenticated, loanController.checkPostL
 //app.post('/loan/upload/:id', passportConfig.isAuthenticated, loanController.postNewLoanImages);
 
 app.get('/loan/view/:id', loanController.loanInfo);
-app.post('/loan/view/:id', passportConfig.isAuthenticated, loanController.getContactInformation);
+app.post('/loan/view/:id', passportConfig.isAuthenticated, loanController.redirectInvest);
 
 app.get('/loan/postings', passportConfig.isAuthenticated, loanController.loanListings);
 app.get('/loan/edit/:id', passportConfig.isAuthenticated, loanController.editLoan);
@@ -217,6 +217,11 @@ app.post('/admin/data', passportConfig.isAuthenticated, loanController.adminPage
 app.post('/loan/editUpload/:id', passportConfig.isAuthenticated, loanController.postLoanEditImages);
 
 app.delete('/loan/edit/:id', passportConfig.isAuthenticated, loanController.deleteLoan);
+
+app.get('/pay/:id', passportConfig.isAuthenticated, loanController.pay);
+app.post('/pay/:id', passportConfig.isAuthenticated, loanController.payMoney);
+app.get('/process', passportConfig.isAuthenticated, loanController.processPayment);
+app.get('/cancel/', passportConfig.isAuthenticated, loanController.cancelPayment);
 /**
  * API examples routes.
  */

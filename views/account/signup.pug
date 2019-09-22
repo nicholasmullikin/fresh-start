@@ -18,6 +18,13 @@ block content
       .col-sm-7
         input.form-control(type='password', name='confirmPassword', id='confirmPassword', placeholder='Confirm Password', required)
     .form-group
+      label.col-sm-3.control-label Investor
+      .input-group.mb-3
+        .input-group-prepend
+          .input-group-text
+            input(type='checkbox', name='investor', id='loaner')
+      | I want to be an investor
+    .form-group
       .col-sm-offset-3.col-sm-7
         button.btn.btn-success(type='submit')
           i.fa.fa-user-plus

@@ -8,6 +8,7 @@ const https = require('https');
 const uuidv1 = require('uuid/v1');
 const User = require('../models/User');
 const Loan = require('../models/Loan');
+const Payment = require('../models/Payment');
 /**
  * GET /loan/view/:id
  * Show the info of a loan.
@@ -23,13 +24,13 @@ exports.loanInfo = (req, res) => {
     _id: mongoose.Types.ObjectId(req.params.id),
   }, (err, loan) => {
     if (err) return res.redirect('/');
-    if (loan === null || loan.loanName === null) {
+    if (loan === null || loan.loanTitle === null) {
       return res.redirect('/');
     }
     return res.render('loan/loan_info', {
-      title: loan.loanName,
+      title: loan.loanTitle,
       name: 'loan_info',
-      array: loan,
+      loan: loan,
     });
   });
 };
@@ -60,7 +61,7 @@ exports.newLoan = (req, res) => {
  * Page one of making a new loan
  */
 exports.checkPostLoan = [
-  check('loanName', 'Name must be between 3 and 100 characters')
+  check('loanTitle', 'Name must be between 3 and 100 characters')
     .isLength({
       min: 4,
       max: 100
@@ -108,25 +109,37 @@ exports.postLoan = (req, res) => {
     }
   })
     .then((user) => {
-      req.body.loanName = xssFilters.inHTMLData(req.body.loanName);
+      if(user.applications.length > 0){
+        req.flash('errors', {
+          msg: 'You can only have one loan at a time',
+        });
+        return res.redirect('back');
+      }
+      req.body.loanTitle = xssFilters.inHTMLData(req.body.loanTitle);
       req.body.loanDescription = xssFilters.inHTMLData(req.body.loanDescription);
       req.body.amount = xssFilters.inHTMLData(req.body.amount);
       req.body.name = xssFilters.inHTMLData(req.body.name);
       req.body.dueDate = xssFilters.inHTMLData(req.body.dueDate);
       req.body.email = xssFilters.inHTMLData(req.body.email);
       req.body.phone_number = xssFilters.inHTMLData(req.body.phone_number);
+
+
+
       const loan = new Loan({
-        loanTitle: req.body.loanName,
+        loanTitle: req.body.loanTitle,
         loanDescription: req.body.loanDescription,
         amountWanted: req.body.amount,
         amountLoaned: 0,
-        creditScore: 0,
+        creditScore: user.creditScore,
         dueDate: req.body.dueDate,
         user: req.user._id,
         contact_info: {
           email: req.body.email,
           phone_number: req.body.phone_number,
-        }
+        },
+        waitingForFunding: 1,
+        waitingForRepayment: 0,
+        overdue: 0,
       });
 
       loan.save((err, loan) => {
@@ -146,6 +159,8 @@ exports.postLoan = (req, res) => {
 
         return res.redirect(`/loan/view/${loan._id}`);
       });
+
+
 
     }, (err) => {
       console.log(err);
@@ -202,7 +217,7 @@ exports.checkPostLoanEdit = [
       min: -180.0,
       max: 180.0
     }),
-  check('loanName', 'Name must be between 3 and 100 characters')
+  check('loanTitle', 'Name must be between 3 and 100 characters')
     .isLength({
       min: 4,
       max: 100
@@ -278,7 +293,7 @@ exports.postLoanEdit = (req, res) => {
         });
         return res.redirect('/');
       }
-      req.body.loanName = xssFilters.inHTMLData(req.body.loanName);
+      req.body.loanTitle = xssFilters.inHTMLData(req.body.loanTitle);
       req.body.loanDescription = xssFilters.inHTMLData(req.body.loanDescription);
       req.body.quantity = xssFilters.inHTMLData(req.body.quantity);
       req.body.lat = xssFilters.inHTMLData(req.body.lat);
@@ -289,7 +304,7 @@ exports.postLoanEdit = (req, res) => {
       req.body.phone_number = xssFilters.inHTMLData(req.body.phone_number);
       req.body.price = xssFilters.inHTMLData(req.body.price);
       const new_loan = {
-        loanName: req.body.loanName || response.loanName,
+        loanTitle: req.body.loanTitle || response.loanTitle,
         loanDescription: req.body.loanDescription || response.loanDescription,
         quantity: req.body.quantity || response.quantity,
         location:
@@ -559,7 +574,7 @@ exports.deleteLoan = (req, res) => {
   Loan.findOne({ _id: mongoose.Types.ObjectId(req.params.id) }, (err, loan) => {
     if (err) return handleError(err);
 
-    User.findById(mongoose.mongo.ObjectId(loan.user), (err, user) => {
+    User.findById(loan.user, (err, user) => {
       if (err) {
         console.log(err);
         return res.sendStatus(402);
@@ -584,54 +599,32 @@ exports.deleteLoan = (req, res) => {
  * POST /loan/view/:id
  * Get contact info for a loan
  */
-exports.getContactInformation = (req, res) => { // TODO: add captcha here
-  if (req.params.id === req.body.plant_id) {
+exports.redirectInvest = (req, res) => {
+  if (req.params.id !== req.body.plant_id) {
     req.flash('errors', {
       msg: 'Not a valid loan id',
     });
     return res.redirect('back');
   }
-  if (!req.user) {
+  else if (!req.user) {
     req.flash('errors', {
       msg: 'You must be logged in to see contact info',
     });
-    return res.sendStatus(401);
   }
-  verifyRecaptcha(req.body['g-recaptcha-response'], (success) => {
-    if (success) {
-      Loan.findById(req.params.id, (err, loan) => {
-        if (err) {
-          console.log(err);
-          return res.sendStatus(402);
-        }
-        User.findById(mongoose.mongo.ObjectId(loan.user), (err, user) => {
-          if (err) {
-            console.log(err);
-            return res.sendStatus(402);
-          }
-          if (user) {
-            return res.render('loan/loan_info', {
-              title: loan.loanName,
-              name: 'loan_info',
-              array: loan,
-              user_info: loan.contact_info,
-            });
-          }
-        });
-      });
-    } else {
-      req.flash('errors', {
-        msg: 'Captcha failed',
-      });
-      return res.redirect('back');
-    }
-  });
+  else {
+    return res.redirect('/pay/' + req.params.id);
+  }
+
 };
 
 
+function checkIfEligible(loan) {
+  return false;
+}
+
 /**
- * POST /pay/:id
- * Get contact info for a loan
+ * GET /pay/:id
+ * Get info to pay for loan
  */
 exports.pay = (req, res) => {
   if (!Loan.isObjectId(req.params.id)) {
@@ -643,18 +636,85 @@ exports.pay = (req, res) => {
   Loan.findOne({
     _id: mongoose.Types.ObjectId(req.params.id),
   }, (err, loan) => {
-    if (err) return res.redirect('/');
-    if (loan === null || loan.loanName === null) {
-      res.redirect('/');
+    if (err) {
+      req.flash('errors', {
+        msg: 'Not a valid loan id',
+      });
+      return res.redirect('/');
     }
-    return res.render('loan/loan_info', {
-      title: loan.loanName,
-      name: 'loan_info',
-      array: loan,
+    if (loan === null || loan.loanTitle === null) {
+      req.flash('errors', {
+        msg: 'Not a valid loan id',
+      });
+      return res.redirect('/');
+    }
+    if(checkIfEligible(loan)){
+      req.flash('errors', {
+        msg: 'Not a valid loan',
+      });
+      return res.redirect('/');
+    }
+    return res.render('payment/pay_loan', {
+      title: loan.loanTitle,
+      loan_: loan
     });
   });
 };
+/**
+ * POST /pay/:id
+ * Get info to pay for loan
+ */
+exports.payMoney = (req, res) => {
+  const paymentJSON = Payment.makePaymentJSON(100, "loan title", req);
+  Payment.makePayment(paymentJSON, (link) => {
+    if(link !== null){
+      return res.redirect(link);
+    }
+    else{
+      req.flash('errors', {
+        msg: 'Error occured',
+      });
+      return res.redirect('back');
+    }
+  });
+};
 
+function getActiveApplicationID(applications) {
+  return applications[0].id;
+}
+
+exports.processPayment = (req, res) => {
+  var paymentId = req.query.paymentId;
+  var payerId = { payer_id: req.query.PayerID };
+  Payment.completePayment(paymentId, payerId, (err, result) => {
+    if (err || result.state !== 'approved') {
+      req.flash('errors', {
+        msg: 'Error occured',
+      });
+      return res.redirect('back');
+    } else {
+      User.findById(req.user.id, (err) => {
+        if (err) {
+          console.log(err);
+        }
+      }).then((user) => {
+        Loan.findOne({
+          _id: getActiveApplicationID(user.applications),
+        }, (err, loan) => {
+          if (err) {
+            return handleError(err);
+          }
+          return res.render('payment/pay_receipt', {
+            title: "Investment Sucessful",
+            payment: result,
+            loan_:loan});
+        });
+      });
+    }
+  });
+};
+
+exports.cancelPayment = (req, res) => { };
 
 
 /**

@@ -107,14 +107,19 @@ exports.postSignup = (req, res, next) => {
     req.flash('errors', errors[prop[0]]); // access property name with [x] notation
     return res.redirect('/signup');
   }
+  var loaner = 0;
+  if(req.body.loaner === "on"){
+    loaner = 1;
+  }
   const user = new User({
     email: req.body.email,
     password: req.body.password,
-    uploads: [{
-      time: 0,
-      size: 0,
-    }],
     admin: false,
+    applications: [],
+    tokens: [],
+    creditScore: 0,
+    paypalId: null,
+    loaner: loaner,
   });
   User.findOne({
     email: req.body.email,

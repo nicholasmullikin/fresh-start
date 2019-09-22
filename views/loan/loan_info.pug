@@ -2,42 +2,28 @@ extends ../layout
 block content
   .container.center
     .page-header
-      h1= array.loanTitle
+      h1= loan.loanTitle
     .row
-        .media-body
-          .panel.panel-primary
-            .panel-heading
-              h3.panel-title Description
-            .panel-body
-              ul.list-group
-                if(typeof array.loanDescription !== "undefined")
-                  li.list-group-item
-                    =array.loanDescription
-                if(typeof array.amountWanted !== "undefined")
-                  li.list-group-item
-                    ="amountWanted: " + array.amountWanted
-                if(typeof array.amountLoaned !== "undefined")
-                  li.list-group-item
-                    ="amountLoaned: " + array.amountLoaned
+      .media-body
+        .panel.panel-primary
+          .panel-heading
+            h3.panel-title Description
+          .panel-body
+            ul.list-group
+              if(typeof loan.loanDescription !== "undefined")
+                li.list-group-item
+                  =loan.loanDescription
+              if(typeof loan.amountWanted !== "undefined")
+                li.list-group-item
+                  ="amountWanted: " + loan.amountWanted
+              if(typeof loan.amountLoaned !== "undefined")
+                li.list-group-item
+                  ="amountLoaned: " + loan.amountLoaned
     .row
       .contact-info(id = "info")
-        if(typeof user_info === 'undefined' || user_info.length === 0)
+        if(loan.waitingForFunding === true)
           form(id="contact_form", action="?", method="POST")
             input(type='hidden', name='_csrf', value=_csrf)
-            input(type='hidden', name='plant_id', value=array._id)
+            input(type='hidden', name='plant_id', value=loan._id)
             button.btn.btn-default(id = "invest")
               | Invest
-            #recaptcha.g-recaptcha(data-sitekey="6LfpOm0UAAAAAL4_FVnJFI1mYP1W3Up01e4wD1K6" data-callback="onSubmit" data-size='invisible')
-        else
-          .panel.panel-info
-            .panel-heading
-              h3.panel-title
-                | Contact Info
-            .panel-body
-              if(typeof user_info.email !== 'undefined' && user_info.email.length !== 0 && user_info.email !== "undefined")
-                p="Email: " + user_info.email
-              if(typeof user_info.phone_number !== 'undefined' && user_info.phone_number.length !== 0 && user_info.phone_number !== "undefined")
-                p="Phone: " + user_info.phone_number
-
-
-
